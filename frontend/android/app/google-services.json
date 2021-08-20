@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "875113385282",
+    "firebase_url": "https://wired-bf519-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "wired-bf519",
+    "storage_bucket": "wired-bf519.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875113385282:android:477a631c598969be364cdb",
+        "android_client_info": {
+          "package_name": "com.Wired.frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875113385282-09mmi8ssppijj5ogeaqlldke302mg1ks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Wired.frontend",
+            "certificate_hash": "938caa70ae57c59ca048915d2fad8fb1cff32a57"
+          }
+        },
+        {
+          "client_id": "875113385282-stn0074pbfckgf1nj1r2a9c2oujio5sc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACSouVDRg1CcAyMoM_9Vdvsi5XlB0aeVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875113385282-stn0074pbfckgf1nj1r2a9c2oujio5sc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

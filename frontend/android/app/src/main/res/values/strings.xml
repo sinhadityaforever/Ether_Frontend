@@ -1,0 +1,5 @@
+<resources>
+<string name="app_name">Wired</string>
+<string name="facebook_app_id">255431426113728</string>
+<string name="fb_login_protocol_scheme">fb255431426113728</string>
+</resources>

@@ -1,0 +1,8 @@
+{
+    "env": {
+        "port": 5000,
+        "JWT_KEY": "secret",
+        "port_message_server": 3000,
+        "ip": "192.168.0.194"
+    }
+}
