@@ -2,9 +2,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
+import 'package:frontend/models/option.dart';
 import 'package:frontend/models/room_message_model.dart';
 import 'package:frontend/models/screening.dart';
+import 'package:googleapis/monitoring/v3.dart';
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
 import '../models/messageModel.dart';
@@ -17,7 +20,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  // String ip = '192.168.0.104';
+  String ip = '192.168.0.104';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -34,6 +37,7 @@ class Data extends ChangeNotifier {
   List<ContactsModel> contacts = [];
   List<dynamic> contactInterest = [];
   List<String> contactInterestString = [];
+  List<FeedCard> feedCards = [];
   String contactInterestInterpolated = '';
   List<dynamic> selfInterest = [];
   List<String> selfInterestString = [];
@@ -616,60 +620,6 @@ class Data extends ChangeNotifier {
     print(socket.connected);
   }
 
-  // void roomConnect(int roomId) {
-  //   socket = IO.io("http://139.59.95.139:3000", //Ronit
-
-  //       <String, dynamic>{
-  //         "transports": ["websocket"],
-  //         "autoConnect": false,
-  //       });
-
-  //   socket.connect();
-  //   socket.emit("room_entry", roomId);
-  //   socket.onConnect((data) {
-  //     socket.on('room_message', (roomMsg) {
-  //       print(roomMsg);
-  //       setRoomMessage(
-  //         roomMsg['room_id'],
-  //         roomMsg['message'],
-  //         roomMsg['sender_id'],
-  //         false,
-  //         roomMsg['isPhoto'],
-  //         roomMsg['imageUrl'],
-  //         roomMsg['sender_name'],
-  //       );
-  //     });
-  //   });
-  //   print(socket.connected);
-  // }
-
-  // void roomConnect() {
-  //   socket = IO.io("http://139.59.95.139:3000", //Ronit
-
-  //       <String, dynamic>{
-  //         "transports": ["websocket"],
-  //         "autoConnect": false,
-  //       });
-
-  //   socket.connect();
-  //   socket.emit("room_entry", selectedRoomId);
-  //   socket.onConnect((data) {
-  //     socket.on('room_message', (roomMsg) {
-  //       print(roomMsg);
-  //       setRoomMessage(
-  //         roomMsg['room_id'],
-  //         roomMsg['message'],
-  //         roomMsg['sender_id'],
-  //         false,
-  //         roomMsg['isPhoto'],
-  //         roomMsg['imageUrl'],
-  //         roomMsg['sender_name'],
-  //       );
-  //     });
-  //   });
-  //   print(socket.connected);
-  // }
-
   void sendRoomMessage(
     String message,
     int senderId,
@@ -880,31 +830,6 @@ class Data extends ChangeNotifier {
         '/contactsPage', (Route<dynamic> route) => false);
     notifyListeners();
   }
-
-  // Future<User> handleWithGoogle() async {
-  //   notifyListeners();
-  //   final GoogleSignInAccount googleSignInAccount =
-  //       (await googleSignIn.signIn())!;
-  //   final GoogleSignInAuthentication googleSignInAuthentication =
-  //       await googleSignInAccount.authentication;
-
-  //   final AuthCredential credential = GoogleAuthProvider.credential(
-  //       idToken: googleSignInAuthentication.idToken,
-  //       accessToken: googleSignInAuthentication.accessToken);
-  //   final UserCredential authResult =
-  //       await _auth.signInWithCredential(credential);
-  //   final User user = authResult.user!;
-  //   assert(!user.isAnonymous);
-  //   assert(await user.getIdToken() != null);
-  //   final User currentUser = _auth.currentUser!;
-  //   assert(currentUser.uid == user.uid);
-  //   print(user.email);
-  //   print(user.displayName);
-  //   uid = user.uid;
-
-  //   notifyListeners();
-  //   return user;
-  // }
 
   Future<int> handleWithGoogle() async {
     try {
@@ -1175,6 +1100,59 @@ class Data extends ChangeNotifier {
             lastMessage: '',
             name: jsonDecode(response.body)[i]['room_name'],
             roomId: jsonDecode(response.body)[i]['room_id'],
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+    notifyListeners();
+  }
+
+  Future<void> getFeedCards() async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('http://$ip:5000/card/$idOfUser'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+      for (var i = 0; i < jsonDecode(response.body).length; i++) {
+        feedCards.add(
+          FeedCard(
+            id: jsonDecode(response.body)[i]['id'],
+            heading: jsonDecode(response.body)[i]['heading'],
+            isQuestion: jsonDecode(response.body)[i]['is_question'],
+            imageUrl: jsonDecode(response.body)[i]['image_url'],
+            content: jsonDecode(response.body)[i]['content'],
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+    notifyListeners();
+  }
+
+  List<Optionsfero> options = [];
+  Future<void> getOptions(int questionId) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('http://$ip:5000/card/options/$questionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+      for (var i = 0; i < jsonDecode(response.body).length; i++) {
+        options.add(
+          Optionsfero(
+            questionId: questionId,
+            option: jsonDecode(response.body)[i]['option'],
+            isAnswer: jsonDecode(response.body)[i]['is_answer'],
           ),
         );
       }
