@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'chatroom.dart';
 import 'contacts.dart';
+import 'feed.dart';
 import 'self_profile_view.dart';
 import '../main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -174,6 +175,9 @@ class _HomePageState extends State<HomePage> {
               indicatorSize: TabBarIndicatorSize.tab,
               tabs: [
                 Tab(
+                  text: 'Feed',
+                ),
+                Tab(
                   text: 'Connections',
                 ),
                 Tab(
@@ -187,6 +191,7 @@ class _HomePageState extends State<HomePage> {
           ),
           body: TabBarView(
             children: [
+              QuestionFeed(),
               ContactPage(),
               ChatRoomContactPage(),
               SelfProfileView(),
