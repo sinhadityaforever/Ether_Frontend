@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/widgets/quiz_button.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class QuestionFeed extends StatefulWidget {
   @override
@@ -28,29 +30,67 @@ class _QuestionFeedState extends State<QuestionFeed> {
                   .isQuestion ==
               false) {
             return Card(
+              margin: EdgeInsets.all(20.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 20,
+              shadowColor: Colors.black,
+              color: Color(0xFF111328),
               child: Column(
                 children: [
-                  Provider.of<Data>(context, listen: false)
-                              .feedCards[index]
-                              .imageUrl ==
-                          'no image'
-                      ? SizedBox(height: 0)
-                      : Image(
+                  if (Provider.of<Data>(context, listen: false)
+                          .feedCards[index]
+                          .imageUrl ==
+                      'no image')
+                    SizedBox(height: 0)
+                  else
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.r),
+                          topRight: Radius.circular(30.r),
+                        ),
+                        child: Image(
+                          height: 350.h,
+                          width: double.infinity,
                           image: NetworkImage(
                             Provider.of<Data>(context, listen: false)
                                 .feedCards[index]
                                 .imageUrl,
                           ),
                         ),
-                  Text(
-                    Provider.of<Data>(context, listen: false)
-                        .feedCards[index]
-                        .heading,
-                  ),
-                  Text(
-                    Provider.of<Data>(context, listen: false)
-                        .feedCards[index]
-                        .content,
+                      ),
+                    ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Text(
+                          Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .heading,
+                          style: TextStyle(
+                            fontSize: 25.sp,
+                            color: Color(0xFFEB1555),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                        child: Text(
+                          Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .content
+                              .replaceAll("20", '\n\n\u2022 '),
+                          style: TextStyle(
+                            fontSize: 17.sp,
+                            color: Colors.white54,
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -59,30 +99,72 @@ class _QuestionFeedState extends State<QuestionFeed> {
             Provider.of<Data>(context, listen: false).getOptions(
                 Provider.of<Data>(context, listen: false).feedCards[index].id);
 
+            Color color1 = Color(0xFF0A0E21);
+            Color color2 = Color(0xFF0A0E21);
+            Color color3 = Color(0xFF0A0E21);
+
             return Card(
+              margin: EdgeInsets.all(20.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 20,
+              shadowColor: Colors.black,
+              color: Color(0xFF111328),
               child: Column(
                 children: [
-                  Provider.of<Data>(context, listen: false)
-                              .feedCards[index]
-                              .imageUrl ==
-                          'no image'
-                      ? SizedBox(height: 0)
-                      : Image(
+                  if (Provider.of<Data>(context, listen: false)
+                          .feedCards[index]
+                          .imageUrl ==
+                      'no image')
+                    SizedBox(height: 0)
+                  else
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.r),
+                          topRight: Radius.circular(30.r),
+                        ),
+                        child: Image(
+                          height: 350.h,
+                          width: double.infinity,
                           image: NetworkImage(
                             Provider.of<Data>(context, listen: false)
                                 .feedCards[index]
                                 .imageUrl,
                           ),
                         ),
-                  Text(
-                    Provider.of<Data>(context, listen: false)
-                        .feedCards[index]
-                        .heading,
+                      ),
+                    ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Text(
+                          Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .heading,
+                          style: TextStyle(
+                            fontSize: 25.sp,
+                            color: Color(0xFFEB1555),
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        child: ListView.builder(itemBuilder: (context, index) {
+                          final option =
+                              Provider.of<Data>(context, listen: false)
+                                  .options[index];
+                          return QuizButton(
+                            colorOfButton: colorOfButton,
+                            onPressedRoundButton: onPressedRoundButton,
+                            textOfButton: textOfButton,
+                          );
+                        }),
+                      )
+                    ],
                   ),
-                  Text(Provider.of<Data>(context).options[0].option),
-                  Text(Provider.of<Data>(context).options[1].option),
-                  Text(Provider.of<Data>(context).options[2].option),
-                  Text(Provider.of<Data>(context).options[3].option),
                 ],
               ),
             );

@@ -7,6 +7,7 @@ import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/option.dart';
 import 'package:frontend/models/room_message_model.dart';
 import 'package:frontend/models/screening.dart';
+import 'package:frontend/widgets/quiz_button.dart';
 import 'package:googleapis/monitoring/v3.dart';
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
@@ -407,6 +408,15 @@ class Data extends ChangeNotifier {
     karam.isSelected = false;
     notifyListeners();
   }
+
+  // void changeQuizButtonColor(QuizButton but, bool isAnser) {
+  //   if (isAnser == true) {
+  //     but.isAnswer = 1;
+  //   } else {
+  //     but.isAnswer = 2;
+  //   }
+  //   notifyListeners();
+  // }
 
   Future<void> updateToggle(List<String> karamList) async {
     try {
