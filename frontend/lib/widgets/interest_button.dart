@@ -7,11 +7,12 @@ class InterestButton extends StatelessWidget {
   final onPressedInterestButton;
   final onLongTap;
 
-  InterestButton(
-      {this.onPressedInterestButton,
-      required this.isSelected,
-      required this.textOfWidget,
-      required this.onLongTap});
+  InterestButton({
+    this.onPressedInterestButton,
+    required this.isSelected,
+    required this.textOfWidget,
+    required this.onLongTap,
+  });
 
   @override
   Widget build(BuildContext context) {
