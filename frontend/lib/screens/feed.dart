@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/widgets/quiz_button.dart';
+import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -99,10 +100,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
             Provider.of<Data>(context, listen: false).getOptions(
                 Provider.of<Data>(context, listen: false).feedCards[index].id);
 
-            Color color1 = Color(0xFF0A0E21);
-            Color color2 = Color(0xFF0A0E21);
-            Color color3 = Color(0xFF0A0E21);
-
             return Card(
               margin: EdgeInsets.all(20.0),
               shape: RoundedRectangleBorder(
@@ -152,16 +149,16 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         ),
                       ),
                       Flexible(
-                        child: ListView.builder(itemBuilder: (context, index) {
-                          final option =
-                              Provider.of<Data>(context, listen: false)
-                                  .options[index];
-                          return QuizButton(
-                            colorOfButton: colorOfButton,
-                            onPressedRoundButton: onPressedRoundButton,
-                            textOfButton: textOfButton,
-                          );
-                        }),
+                        child: ListView.builder(
+                            itemBuilder: (context, index) {
+                              final option =
+                                  Provider.of<Data>(context, listen: false)
+                                      .options[index];
+                              return QuizButton(
+                                  textOfButton: option.option,
+                                  isCorrect: option.isAnswer);
+                            },
+                            itemCount: 3),
                       )
                     ],
                   ),

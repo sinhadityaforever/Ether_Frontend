@@ -1171,4 +1171,13 @@ class Data extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  // void checkAnswer(Optionsfero option, bool isAnswer) {
+  //   if (isAnswer == true) {
+  //     option.isAnswer = 1;
+  //   } else {
+  //     option.isAnswer = 2;
+  //   }
+  //   notifyListeners();
+  // }
 }

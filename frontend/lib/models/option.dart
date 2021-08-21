@@ -1,7 +1,7 @@
 class Optionsfero {
   final int questionId;
   final String option;
-  final bool isAnswer;
+  bool isAnswer;
 
   Optionsfero({
     required this.questionId,
