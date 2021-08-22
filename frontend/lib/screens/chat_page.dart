@@ -173,14 +173,15 @@ class _ChatPageState extends State<ChatPage> {
                             setState(() {
                               Provider.of<Data>(context, listen: false)
                                   .setMessage(
-                                      args.recieverId,
-                                      messageInField,
-                                      Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      false,
-                                      false,
-                                      'no image',
-                                      uuid);
+                                args.recieverId,
+                                messageInField,
+                                Provider.of<Data>(context, listen: false)
+                                    .idOfUser,
+                                false,
+                                false,
+                                'no image',
+                                uuid,
+                              );
                               _controller1.animateTo(
                                 _controller1.position.maxScrollExtent + 100.h,
                                 duration: Duration(milliseconds: 300),
