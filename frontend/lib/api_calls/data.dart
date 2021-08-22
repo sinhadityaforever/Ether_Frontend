@@ -17,9 +17,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:uuid/uuid.dart';
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.104';
+  String ip = '192.168.0.194';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -450,22 +451,34 @@ class Data extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<MessageModel> messages = [];
+  // List<MessageModel> messages = [];
 
   List<Map<String, dynamic>> LastMessages = [];
+  List<Map<String, dynamic>> messages = [];
 
-  void setMessage(recieverId, message, senderId, isAdmin, isPhoto, imageUrl) {
+  void setMessage(
+      recieverId, message, senderId, isAdmin, isPhoto, imageUrl, uuid) {
     print('started Working');
-    messages.add(
-      MessageModel(
-        message: message,
-        recieverId: recieverId,
-        senderId: senderId,
-        isAdmin: isAdmin,
-        isPhoto: isPhoto,
-        imageUrl: imageUrl,
-      ),
-    );
+    // messages.add(
+    //   MessageModel(
+    //     message: message,
+    //     recieverId: recieverId,
+    //     senderId: senderId,
+    //     isAdmin: isAdmin,
+    //     isPhoto: isPhoto,
+    //     imageUrl: imageUrl,
+    //   ),
+    // );
+    messages.add({
+      'message': message,
+      'recieverId': recieverId,
+      'senderId': senderId,
+      'isAdmin': isAdmin,
+      'isPhoto': isPhoto,
+      'imageUrl': imageUrl,
+      'uuid': uuid
+    });
+
     print('Added to list');
     LastMessages.add(isPhoto
         ? {'recieverId': recieverId, 'message': 'Photo', 'senderId': senderId}
@@ -492,7 +505,7 @@ class Data extends ChangeNotifier {
 
   Future<void> getMessage() async {
     http.Response response = await http.get(
-      Uri.parse('https://chat.etherapp.social/msg/${idOfUser}'),
+      Uri.parse('http://$ip:5000/msg/${idOfUser}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -506,14 +519,9 @@ class Data extends ChangeNotifier {
       bool isAdmin = jsonDecode(response.body)[i]['isAdmin'];
       bool isPhoto = jsonDecode(response.body)[i]['isPhoto'];
       String imageUrl = jsonDecode(response.body)[i]['imageUrl'];
+      String uuid = jsonDecode(response.body)[i]['uuid'];
       setMessage(
-        recieverId,
-        msgText,
-        senderId,
-        isAdmin,
-        isPhoto,
-        imageUrl,
-      );
+          recieverId, msgText, senderId, isAdmin, isPhoto, imageUrl, uuid);
     }
   }
 
@@ -534,6 +542,7 @@ class Data extends ChangeNotifier {
       bool isPhoto = jsonDecode(response.body)[i]['is_photo'];
       String imageUrl = jsonDecode(response.body)[i]['photo_url'];
       String senderName = jsonDecode(response.body)[i]['username'];
+
       setRoomMessage(
         roomId,
         msgText,
@@ -548,7 +557,7 @@ class Data extends ChangeNotifier {
 
   late IO.Socket socket;
   void connect() {
-    socket = IO.io("http://139.59.95.139:3000", //Ronit
+    socket = IO.io("http://${ip}:3000", //Ronit
 
         <String, dynamic>{
           "transports": ["websocket"],
@@ -568,6 +577,7 @@ class Data extends ChangeNotifier {
           false,
           msg['isPhoto'],
           msg['imageUrl'],
+          msg['uid'],
         );
         print('Working fine Connect');
       });
@@ -615,14 +625,17 @@ class Data extends ChangeNotifier {
     int recieverId,
     bool isPhoto,
     String imageUrl,
+    String uuid,
   ) {
+    // String uuid = Uuid().v4();
     print('working fine sendMessage');
     socket.emit("message", {
       "message": message,
       "sender_id": senderId,
       "reciever_id": recieverId,
       "isPhoto": isPhoto,
-      "imageUrl": imageUrl
+      "imageUrl": imageUrl,
+      "uuid": uuid
     });
   }
 
@@ -666,10 +679,10 @@ class Data extends ChangeNotifier {
   }
 
   bool karmaCheck(int contactId) {
-    List<MessageModel> selectedMessage = [];
+    List<Map<String, dynamic>> selectedMessage = [];
     for (var i = 0; i < messages.length; i++) {
-      if (messages[i].recieverId == contactId ||
-          messages[i].senderId == contactId) {
+      if (messages[i]['recieverId'] == contactId ||
+          messages[i]['senderId'] == contactId) {
         selectedMessage.add(messages[i]);
       }
     }
@@ -1153,6 +1166,24 @@ class Data extends ChangeNotifier {
       }
     } catch (e) {
       print(e);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteMessage(String uuid) async {
+    messages.removeWhere((element) => element['uuid'] == uuid);
+    try {
+      await http.delete(
+        Uri.parse('http://$ip:5000/msg/$uuid'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+    } catch (e) {
+      print(e);
+      ;
     }
     notifyListeners();
   }

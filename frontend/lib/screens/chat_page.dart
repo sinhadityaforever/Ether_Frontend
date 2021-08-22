@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../widgets/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatPageArguments {
   final String avatarUrl;
@@ -121,17 +122,17 @@ class _ChatPageState extends State<ChatPage> {
               itemBuilder: (context, index) {
                 final message = Provider.of<Data>(context).messages[index];
 
-                if (message.recieverId == args.recieverId ||
-                    message.senderId == args.recieverId) {
+                if (message['recieverId'] == args.recieverId ||
+                    message['senderId'] == args.recieverId) {
                   return ChatBubble(
-                    texto: message.message,
-                    isMe:
-                        message.senderId == Provider.of<Data>(context).idOfUser
-                            ? true
-                            : false,
-                    isAdmin: message.isAdmin,
-                    isPhoto: message.isPhoto,
-                    imageUrl: message.imageUrl,
+                    texto: message['message'],
+                    isMe: message['senderId'] ==
+                            Provider.of<Data>(context).idOfUser
+                        ? true
+                        : false,
+                    isAdmin: message['isAdmin'],
+                    isPhoto: message['isPhoto'],
+                    imageUrl: message['imageUrl'],
                   );
                 } else {
                   return SizedBox(
@@ -168,17 +169,18 @@ class _ChatPageState extends State<ChatPage> {
                           color: Color(0xFFEB1555),
                           icon: Icon(Icons.send),
                           onPressed: () {
+                            String uuid = Uuid().v4();
                             setState(() {
                               Provider.of<Data>(context, listen: false)
                                   .setMessage(
-                                args.recieverId,
-                                messageInField,
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser,
-                                false,
-                                false,
-                                'no image',
-                              );
+                                      args.recieverId,
+                                      messageInField,
+                                      Provider.of<Data>(context, listen: false)
+                                          .idOfUser,
+                                      false,
+                                      false,
+                                      'no image',
+                                      uuid);
                               _controller1.animateTo(
                                 _controller1.position.maxScrollExtent + 100.h,
                                 duration: Duration(milliseconds: 300),
@@ -187,13 +189,13 @@ class _ChatPageState extends State<ChatPage> {
 
                               Provider.of<Data>(context, listen: false)
                                   .sendMessage(
-                                messageInField,
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser,
-                                args.recieverId,
-                                false,
-                                'no image',
-                              );
+                                      messageInField,
+                                      Provider.of<Data>(context, listen: false)
+                                          .idOfUser,
+                                      args.recieverId,
+                                      false,
+                                      'no image',
+                                      uuid);
                               _controller.clear();
                               if (Provider.of<Data>(context, listen: false)
                                   .karmaCheck(args.recieverId)) {
@@ -321,20 +323,22 @@ class _ChatPageState extends State<ChatPage> {
                               RoundedButton(
                                 colorOfButton: Color(0xFFEB1555),
                                 onPressedRoundButton: () async {
+                                  String uuidImage = Uuid().v4();
                                   if (imageUrlChanged == 'no image') {
                                     Provider.of<Data>(context, listen: false)
                                         .showIndicator = false;
                                   } else {
                                     Provider.of<Data>(context, listen: false)
                                         .setMessage(
-                                      args.recieverId,
-                                      'image',
-                                      Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      false,
-                                      true,
-                                      imageUrlChanged,
-                                    );
+                                            args.recieverId,
+                                            'image',
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .idOfUser,
+                                            false,
+                                            true,
+                                            imageUrlChanged,
+                                            uuidImage);
                                     print(imageUrlChanged + '7');
                                     _controller1.animateTo(
                                       _controller1.position.maxScrollExtent +
@@ -346,13 +350,14 @@ class _ChatPageState extends State<ChatPage> {
 
                                     Provider.of<Data>(context, listen: false)
                                         .sendMessage(
-                                      'image',
-                                      Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      args.recieverId,
-                                      true,
-                                      imageUrlChanged,
-                                    );
+                                            'image',
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .idOfUser,
+                                            args.recieverId,
+                                            true,
+                                            imageUrlChanged,
+                                            uuidImage);
                                   }
                                   Navigator.pop(context);
                                 },

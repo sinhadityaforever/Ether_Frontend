@@ -125,7 +125,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   topRight: Radius.circular(30.r),
                                 ),
                                 child: Image(
-                                  height: 350.h,
+                                  height: 300.h,
                                   width: double.infinity,
                                   image: NetworkImage(
                                     Provider.of<Data>(context, listen: false)
