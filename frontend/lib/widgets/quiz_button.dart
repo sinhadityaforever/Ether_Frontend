@@ -16,31 +16,31 @@ class QuizButton extends StatefulWidget {
 }
 
 class _QuizButtonState extends State<QuizButton> {
+  Color _color = Color(0xFF0A0E21);
   @override
   Widget build(BuildContext context) {
-    Color _color = Colors.black;
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Material(
+      child: MaterialButton(
         color: _color,
-        borderRadius: BorderRadius.circular(30.0.r),
-        elevation: 5.0,
-        child: MaterialButton(
-          onPressed: () {
-            setState(() {
-              if (widget.isCorrect == true) {
-                _color = Colors.green;
-              } else {
-                _color = Colors.red;
-              }
-            });
-          },
-          minWidth: 200.w,
-          height: 42.0.h,
-          child: Text(
-            widget.textOfButton,
-            style: TextStyle(color: Colors.white),
-          ),
+        minWidth: 200.w,
+        onPressed: () {
+          setState(() {
+            if (widget.isCorrect == true) {
+              _color = Colors.green;
+            } else {
+              _color = Colors.red;
+            }
+          });
+        },
+        onLongPress: () {
+          setState(() {
+            _color = Color(0xFF0A0E21);
+          });
+        },
+        child: Text(
+          widget.textOfButton,
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );

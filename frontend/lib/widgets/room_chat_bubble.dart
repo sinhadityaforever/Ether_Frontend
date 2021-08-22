@@ -11,6 +11,7 @@ class RoomChatBubble extends StatelessWidget {
     required this.isPhoto,
     required this.imageUrl,
     required this.senderName,
+    // required this.showProfileCallback,
   });
   final String texto;
   final bool isMe;
@@ -18,6 +19,7 @@ class RoomChatBubble extends StatelessWidget {
   final bool isPhoto;
   final String imageUrl;
   final String senderName;
+  // final showProfileCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class RoomChatBubble extends StatelessWidget {
       isPhoto: isPhoto,
       imageUrl: imageUrl,
       senderName: senderName,
+      // showProfileCallback: showProfileCallback,
     );
   }
 }

@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        length: 4,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -107,8 +107,8 @@ class _HomePageState extends State<HomePage> {
                         color: Color(0xFFEB1555),
                       ),
                       onSelected: (value) {
-                        if (value == 'Edit Profile') {
-                          Navigator.pushNamed(context, '/profileEdit');
+                        if (value == 'Profile') {
+                          Navigator.pushNamed(context, '/selfProfileView');
                         }
                         if (value == 'Karma levels') {
                           Navigator.pushNamed(context, '/karmalevels');
@@ -143,8 +143,8 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (BuildContext context) {
                         return [
                           PopupMenuItem(
-                            child: Text('Edit Profile'),
-                            value: "Edit Profile",
+                            child: Text('Profile'),
+                            value: "Profile",
                           ),
                           PopupMenuItem(
                             child: Text('Karma levels'),
@@ -175,16 +175,13 @@ class _HomePageState extends State<HomePage> {
               indicatorSize: TabBarIndicatorSize.tab,
               tabs: [
                 Tab(
-                  text: 'Feed',
+                  text: 'Scroll Up',
                 ),
                 Tab(
                   text: 'Connections',
                 ),
                 Tab(
                   text: 'Chat rooms',
-                ),
-                Tab(
-                  text: 'Profile',
                 ),
               ],
             ),
@@ -194,7 +191,6 @@ class _HomePageState extends State<HomePage> {
               QuestionFeed(),
               ContactPage(),
               ChatRoomContactPage(),
-              SelfProfileView(),
             ],
           ),
         ),

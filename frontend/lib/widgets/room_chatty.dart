@@ -3,7 +3,7 @@ import 'package:frontend/screens/photo.dart';
 import 'package:linkable/linkable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class roomChatty extends StatelessWidget {
+class roomChatty extends StatefulWidget {
   const roomChatty({
     required this.isMe,
     required this.texto,
@@ -11,6 +11,7 @@ class roomChatty extends StatelessWidget {
     required this.isPhoto,
     required this.imageUrl,
     required this.senderName,
+    // required this.showProfileCallback,
   });
 
   final bool isMe;
@@ -19,24 +20,31 @@ class roomChatty extends StatelessWidget {
   final bool isPhoto;
   final String imageUrl;
   final String senderName;
+  // final showProfileCallback;
+
+  @override
+  _roomChattyState createState() => _roomChattyState();
+}
+
+class _roomChattyState extends State<roomChatty> {
   @override
   Widget build(BuildContext context) {
-    if (isPhoto) {
+    if (widget.isPhoto) {
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(
             context,
             '/photo',
-            arguments: PhotoArguments(imageUrl: imageUrl),
+            arguments: PhotoArguments(imageUrl: widget.imageUrl),
           );
         },
         child: Align(
-          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: widget.isMe ? Alignment.centerRight : Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Container(
               decoration: BoxDecoration(
-                color: isMe ? Color(0xFF94002C) : Color(0xFFEB1555),
+                color: widget.isMe ? Color(0xFF94002C) : Color(0xFFEB1555),
                 borderRadius: BorderRadius.circular(10),
               ),
               height: MediaQuery.of(context).size.height / 3.0,
@@ -46,14 +54,14 @@ class roomChatty extends StatelessWidget {
                 margin: EdgeInsets.all(3.r),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                    topLeft: isAdmin
+                    topLeft: widget.isAdmin
                         ? Radius.circular(10.0.r)
-                        : isMe
+                        : widget.isMe
                             ? Radius.circular(10.0.r)
                             : Radius.circular(0),
-                    topRight: isAdmin
+                    topRight: widget.isAdmin
                         ? Radius.circular(10.0.r)
-                        : isMe
+                        : widget.isMe
                             ? Radius.circular(0)
                             : Radius.circular(10.0.r),
                     bottomLeft: Radius.circular(10.0.r),
@@ -61,7 +69,7 @@ class roomChatty extends StatelessWidget {
                   ),
                 ),
                 child: Image(
-                  image: NetworkImage(imageUrl),
+                  image: NetworkImage(widget.imageUrl),
                 ),
               ),
             ),
@@ -72,30 +80,30 @@ class roomChatty extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: isAdmin == true
+          crossAxisAlignment: widget.isAdmin == true
               ? CrossAxisAlignment.center
               : CrossAxisAlignment.end,
-          textDirection: isMe ? TextDirection.ltr : TextDirection.rtl,
+          textDirection: widget.isMe ? TextDirection.ltr : TextDirection.rtl,
           children: [
             Material(
               borderRadius: BorderRadius.only(
-                topLeft: isAdmin
+                topLeft: widget.isAdmin
                     ? Radius.circular(10.0.r)
-                    : isMe
+                    : widget.isMe
                         ? Radius.circular(10.0.r)
                         : Radius.circular(0),
-                topRight: isAdmin
+                topRight: widget.isAdmin
                     ? Radius.circular(10.0.r)
-                    : isMe
+                    : widget.isMe
                         ? Radius.circular(0)
                         : Radius.circular(10.0.r),
                 bottomLeft: Radius.circular(10.0.r),
                 bottomRight: Radius.circular(10.0.r),
               ),
               elevation: 5.0,
-              color: isAdmin
+              color: widget.isAdmin
                   ? Color(0xFF056162)
-                  : isMe
+                  : widget.isMe
                       ? Color(0xFF94002C)
                       : Color(0xFF131C21),
               child: Padding(
@@ -104,32 +112,42 @@ class roomChatty extends StatelessWidget {
                   horizontal: 20.0,
                 ),
                 child: Column(
-                  crossAxisAlignment:
-                      isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  crossAxisAlignment: widget.isMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   children: [
                     Column(
                       children: [
-                        isMe
-                            ? Text(
-                                'Me',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white60,
-                                ),
-                              )
-                            : Text(
-                                senderName,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white60,
-                                ),
+                        if (widget.isMe)
+                          Text(
+                            'Me',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white60,
+                            ),
+                          )
+                        else
+                          InkWell(
+                            onTap: () {
+                              // widget.showProfileCallback;
+                            },
+                            child: Text(
+                              widget.senderName,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white60,
                               ),
+                            ),
+                          ),
                       ],
                     ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
                     Linkable(
-                      text: texto,
+                      text: widget.texto,
                       textColor: Colors.white,
-                      linkColor: isMe ? Colors.black : Color(0xFFEB1555),
+                      linkColor: widget.isMe ? Colors.black : Color(0xFFEB1555),
                       style: TextStyle(
                         fontSize: 17.0.sp,
                         color: Colors.white,

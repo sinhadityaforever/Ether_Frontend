@@ -87,6 +87,9 @@ class _ChatPageState extends State<ChatPage> {
                         level: Provider.of<Data>(context, listen: false)
                             .selectedContact
                             .level,
+                        karmaNumber: Provider.of<Data>(context, listen: false)
+                            .selectedContact
+                            .karmaNumber,
                       ),
                     );
                   },
