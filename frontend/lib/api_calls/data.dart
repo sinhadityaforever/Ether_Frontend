@@ -7,8 +7,6 @@ import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/option.dart';
 import 'package:frontend/models/room_message_model.dart';
 import 'package:frontend/models/screening.dart';
-import 'package:frontend/widgets/quiz_button.dart';
-import 'package:googleapis/monitoring/v3.dart';
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
 import '../models/messageModel.dart';
@@ -366,26 +364,6 @@ class Data extends ChangeNotifier {
             textOfButton: 'Meditation',
           ),
         ]),
-    // ScreeningModel(
-    //     textOfButton: 'Practicing fun hobbies',
-    //     iconFromModel: FontAwesomeIcons.guitar,
-    //     screenedInterests: [
-    //       InterestModel(
-    //         textOfButton: 'Playing guitar',
-    //       ),
-    //       InterestModel(
-    //         textOfButton: 'Practicing my moves',
-    //       ),
-    //       InterestModel(
-    //         textOfButton: 'Writing sketches',
-    //       ),
-    //       InterestModel(
-    //         textOfButton: 'Painting for fun',
-    //       ),
-    //       InterestModel(
-    //         textOfButton: 'Playing with my pet',
-    //       ),
-    //     ]),
     ScreeningModel(
         textOfButton: 'Struggling for inspiration for my next design',
         iconFromModel: FontAwesomeIcons.figma,
@@ -408,15 +386,6 @@ class Data extends ChangeNotifier {
     karam.isSelected = false;
     notifyListeners();
   }
-
-  // void changeQuizButtonColor(QuizButton but, bool isAnser) {
-  //   if (isAnser == true) {
-  //     but.isAnswer = 1;
-  //   } else {
-  //     but.isAnswer = 2;
-  //   }
-  //   notifyListeners();
-  // }
 
   Future<void> updateToggle(List<String> karamList) async {
     try {
@@ -459,17 +428,6 @@ class Data extends ChangeNotifier {
       print(e);
     }
   }
-
-  // Future<void> getScreens() async {
-  //   http.Response response = await http.get(
-  //     Uri.parse('https://chat.etherapp.social/occupation/$idOfUser'),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json',
-  //       'Authorization': 'Bearer ${tokenOfUser}',
-  //     },
-  //   );
-  // }
 
   Future<void> getInterest() async {
     http.Response response = await http.get(
@@ -736,9 +694,7 @@ class Data extends ChangeNotifier {
   }
 
   Future<void> getContacts() async {
-    print(0);
     contacts.clear();
-    print(1);
     http.Response response = await http.get(
       Uri.parse('https://chat.etherapp.social/matches/${idOfUser}'),
       headers: {
@@ -747,10 +703,9 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
-    print(2);
-    print(jsonDecode(response.body)['contacts'].length);
+
     var insaan = jsonDecode(response.body)['contacts'];
-    print(3);
+
     for (int i = 0; i < jsonDecode(response.body)['contacts'].length; i++) {
       contacts.add(ContactsModel(
         imageUrl: insaan[i]['avatar_url'] != null
@@ -765,6 +720,34 @@ class Data extends ChangeNotifier {
       ));
     }
     print(4);
+    notifyListeners();
+  }
+
+  List<ContactsModel> profileView = [];
+
+  Future<void> getProfiles(int id) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('https://chat.etherapp.social/users/${id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+      profileView.clear();
+      profileView.add(ContactsModel(
+        imageUrl: jsonDecode(response.body)['avatar_url'],
+        lastMessage: '',
+        name: jsonDecode(response.body)['username'],
+        contactId: jsonDecode(response.body)['id'],
+        aboutValue: jsonDecode(response.body)['bio'],
+        karmaNumber: jsonDecode(response.body)['karma'],
+        level: levelEmitter(jsonDecode(response.body)['karma']),
+      ));
+    } catch (e) {
+      print(e);
+    }
     notifyListeners();
   }
 
@@ -1129,6 +1112,7 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
       );
+      feedCards.clear();
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         feedCards.add(
           FeedCard(
@@ -1140,6 +1124,7 @@ class Data extends ChangeNotifier {
           ),
         );
       }
+      feedCards.shuffle();
     } catch (e) {
       print(e);
     }

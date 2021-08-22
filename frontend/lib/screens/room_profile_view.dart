@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/api_calls/data.dart';
-import 'package:frontend/widgets/negative_button.dart';
-import 'package:frontend/widgets/negative_popup.dart';
 import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/profile_view_tile.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProfileViewArgs {
+class RoomProfileViewArgs {
   final String name;
   final String imageUrl;
   final String aboutValue;
@@ -15,7 +11,7 @@ class ProfileViewArgs {
   final int level;
   final int karmaNumber;
 
-  ProfileViewArgs({
+  RoomProfileViewArgs({
     required this.name,
     required this.imageUrl,
     required this.aboutValue,
@@ -25,12 +21,13 @@ class ProfileViewArgs {
   });
 }
 
-class ProfileView extends StatelessWidget {
+class RoomProfileView extends StatelessWidget {
   String karmaLevel = '';
   int pointsForNextLevel = 0;
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ProfileViewArgs;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as RoomProfileViewArgs;
     if (args.level == 1) {
       karmaLevel = 'Novice';
       pointsForNextLevel = 100 - args.karmaNumber;
@@ -140,66 +137,6 @@ class ProfileView extends StatelessWidget {
               title: 'Karma',
               value:
                   '${karmaLevel} -- ${pointsForNextLevel} more to go to the next level',
-            ),
-            Divider(
-              indent: 25.h,
-              thickness: 0.8.w,
-            ),
-            Column(
-              children: [
-                negativeButton(
-                  icon: Icons.block,
-                  action: 'Block User',
-                  negativeAction: () {
-                    print('I got tapped');
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => NegativePopup(
-                        popuptext: 'Do you want to block the user?',
-                        onPresseedPopup: () {
-                          Provider.of<Data>(context, listen: false).blockUser(
-                              Provider.of<Data>(context, listen: false)
-                                  .selectedContact
-                                  .contactId);
-                          Provider.of<Data>(context, listen: false)
-                              .getContacts();
-                          Navigator.pushNamed(context, '/contactsPage');
-                        },
-                        negativeTitle: 'Block User',
-                        action: 'Block',
-                      ),
-                    );
-                  },
-                ),
-                Divider(
-                  indent: 25.h,
-                  thickness: 0.8.w,
-                ),
-                negativeButton(
-                  icon: Icons.report,
-                  action: 'Report User',
-                  negativeAction: () {
-                    print('I got tapped');
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => NegativePopup(
-                        popuptext: 'Do you want to report the user?',
-                        onPresseedPopup: () {
-                          Provider.of<Data>(context, listen: false).blockUser(
-                              Provider.of<Data>(context, listen: false)
-                                  .selectedContact
-                                  .contactId);
-                          Provider.of<Data>(context, listen: false)
-                              .getContacts();
-                          Navigator.pushNamed(context, '/contactsPage');
-                        },
-                        negativeTitle: 'Report User',
-                        action: 'Report',
-                      ),
-                    );
-                  },
-                ),
-              ],
             ),
           ],
         ),

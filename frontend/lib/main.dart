@@ -14,6 +14,8 @@ import 'package:frontend/screens/karma_levels.dart';
 import 'package:frontend/screens/logo.dart';
 import 'package:frontend/screens/photo.dart';
 import 'package:frontend/screens/profile_view_page.dart';
+import 'package:frontend/screens/room_profile_view.dart';
+import 'package:frontend/screens/self_profile_view.dart';
 import 'package:frontend/screens/welcome.dart';
 import 'api_calls/data.dart';
 import 'screens/edit_profile_page.dart';
@@ -145,6 +147,8 @@ class _MyAppState extends State<MyApp> {
                   '/editOccupation': (context) => OccupationEdit(),
                   '/editInterest': (context) => EditInterestAfterOccupation(),
                   '/chatRoomChatScreen': (context) => RoomChatPage(),
+                  '/selfProfileView': (context) => SelfProfileView(),
+                  '/roomProfileView': (context) => RoomProfileView()
                 },
               ),
             );

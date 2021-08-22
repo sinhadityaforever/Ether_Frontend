@@ -6,7 +6,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
-
 import 'package:frontend/widgets/room_chat_bubble.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,9 +36,6 @@ class _RoomChatPageState extends State<RoomChatPage> {
   TextEditingController _controller = TextEditingController();
   @override
   void initState() {
-    print(Provider.of<Data>(context, listen: false).selectedRoomId.toString() +
-        "fuck load");
-    // Provider.of<Data>(context, listen: false).roomConnect();
     Timer(
         Duration(seconds: 0),
         () => _controller1
@@ -69,26 +65,7 @@ class _RoomChatPageState extends State<RoomChatPage> {
                 // ignore: deprecated_member_use
                 FlatButton(
                   onPressed: () {
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   '/profileView',
-                    //   arguments: ProfileViewArgs(
-                    //     name: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .name,
-                    //     imageUrl: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .imageUrl,
-                    //     aboutValue: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .aboutValue,
-                    //     interestValue: Provider.of<Data>(context, listen: false)
-                    //         .contactInterestInterpolated,
-                    //     level: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .level,
-                    //   ),
-                    // );
+                    print('I got tapped');
                   },
                   child: Row(
                     children: [
@@ -129,6 +106,29 @@ class _RoomChatPageState extends State<RoomChatPage> {
                     isPhoto: message.isPhoto,
                     imageUrl: message.imageUrl,
                     senderName: message.senderName,
+                    // showProfileCallback: Navigator.pushNamed(
+                    //   context,
+                    //   '//roomProfileView',
+                    //   arguments: RoomProfileViewArgs(
+                    //     name: Provider.of<Data>(context, listen: false)
+                    //         .profileView[0]
+                    //         .name,
+                    //     imageUrl: Provider.of<Data>(context, listen: false)
+                    //         .profileView[0]
+                    //         .imageUrl,
+                    //     aboutValue: Provider.of<Data>(context, listen: false)
+                    //         .profileView[0]
+                    //         .aboutValue,
+                    //     interestValue: Provider.of<Data>(context, listen: false)
+                    //         .contactInterestInterpolated,
+                    //     level: Provider.of<Data>(context, listen: false)
+                    //         .profileView[0]
+                    //         .level,
+                    //     karmaNumber: Provider.of<Data>(context, listen: false)
+                    //         .profileView[0]
+                    //         .karmaNumber,
+                    //   ),
+                    // ),
                   );
                 } else {
                   return SizedBox(

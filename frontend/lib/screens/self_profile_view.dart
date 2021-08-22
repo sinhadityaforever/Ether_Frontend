@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/widgets/popup_screen.dart';
-
 import 'package:frontend/widgets/profile_view_tile.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
