@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/widgets/popup_screen.dart';
+import 'package:provider/provider.dart';
 
 class QuizButton extends StatefulWidget {
   QuizButton({
@@ -27,6 +30,14 @@ class _QuizButtonState extends State<QuizButton> {
         onPressed: () {
           setState(() {
             if (widget.isCorrect == true) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => Popup(
+                  popupTitle: "Leveled up karma by 10",
+                  popuptext: "You answered the question right!!",
+                ),
+              );
+              Provider.of<Data>(context, listen: false).increasekarma();
               _color = Colors.green;
             } else {
               _color = Colors.red;

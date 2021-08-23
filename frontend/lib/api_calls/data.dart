@@ -9,7 +9,6 @@ import 'package:frontend/models/room_message_model.dart';
 import 'package:frontend/models/screening.dart';
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
-import '../models/messageModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
@@ -17,10 +16,9 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:uuid/uuid.dart';
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.104';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -269,6 +267,20 @@ class Data extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> increasekarma() async {
+    try {
+      await http.patch(Uri.parse('http://$ip:5000/karma/iKarma/${idOfUser}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${tokenOfUser}',
+          });
+    } catch (e) {
+      print(e);
+    }
+    await getSelf();
   }
 
   final List<InterestModel> interests = [];

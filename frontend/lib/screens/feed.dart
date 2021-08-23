@@ -10,6 +10,8 @@ class QuestionFeed extends StatefulWidget {
   _QuestionFeedState createState() => _QuestionFeedState();
 }
 
+class DataModel {}
+
 class _QuestionFeedState extends State<QuestionFeed> {
   @override
   Widget build(BuildContext context) {
