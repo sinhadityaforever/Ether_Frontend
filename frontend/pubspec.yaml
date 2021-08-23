@@ -49,6 +49,8 @@ dependencies:
   tiktoklikescroller: ^0.1.8
   uuid: ^3.0.4
 
+  swipe_to: 0.0.1+8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

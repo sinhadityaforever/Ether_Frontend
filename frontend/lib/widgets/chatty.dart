@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/screens/photo.dart';
 import 'package:linkable/linkable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+
+import 'negative_popup.dart';
 
 class chatty extends StatelessWidget {
   const chatty({
+    required this.uuid,
+    required this.isReply,
+    required this.replyTo,
     required this.isMe,
     required this.texto,
     required this.isAdmin,
@@ -17,6 +24,10 @@ class chatty extends StatelessWidget {
   final bool isAdmin;
   final bool isPhoto;
   final String imageUrl;
+  final String uuid;
+  final bool isReply;
+  final String replyTo;
+
   @override
   Widget build(BuildContext context) {
     if (isPhoto) {
@@ -75,6 +86,34 @@ class chatty extends StatelessWidget {
               : CrossAxisAlignment.end,
           textDirection: isMe ? TextDirection.ltr : TextDirection.rtl,
           children: [
+            if (isReply == true)
+              InkWell(
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isAdmin
+                        ? Color(0xFF056162)
+                        : isMe
+                            ? Color(0xFF862E48)
+                            : Color(0xFF2A2F32),
+                    borderRadius: BorderRadius.only(
+                      bottomRight: isAdmin
+                          ? Radius.circular(10.0.r)
+                          : isMe
+                              ? Radius.circular(0)
+                              : Radius.circular(10.0.r),
+                      topLeft: Radius.circular(10.0.r),
+                      topRight: Radius.circular(10.0.r),
+                    ),
+                  ),
+                  child: Text(
+                    Provider.of<Data>(context, listen: false)
+                        .messages
+                        .singleWhere(
+                            (element) => element['uuid'] == replyTo)['message'],
+                  ),
+                ),
+              ),
             Material(
               borderRadius: BorderRadius.only(
                 topLeft: isAdmin

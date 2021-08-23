@@ -53,6 +53,7 @@ class Data extends ChangeNotifier {
   List<String> userOccupation = [];
   List<InterestModel> generatedInterests = [];
   List<String> generatedInterestsText = [];
+  Map<String, dynamic> repliedMessage = {};
   String notifToken = '';
   String bioOfUser = '';
   String avatarUrlOfUser =
@@ -468,8 +469,8 @@ class Data extends ChangeNotifier {
   List<Map<String, dynamic>> LastMessages = [];
   List<Map<String, dynamic>> messages = [];
 
-  void setMessage(
-      recieverId, message, senderId, isAdmin, isPhoto, imageUrl, uuid) {
+  void setMessage(recieverId, message, senderId, isAdmin, isPhoto, imageUrl,
+      uuid, isReply, repliedTo) {
     print('started Working');
     // messages.add(
     //   MessageModel(
@@ -488,7 +489,9 @@ class Data extends ChangeNotifier {
       'isAdmin': isAdmin,
       'isPhoto': isPhoto,
       'imageUrl': imageUrl,
-      'uuid': uuid
+      'uuid': uuid,
+      'isReply': isReply,
+      'repliedTo': repliedTo
     });
 
     print('Added to list');
@@ -532,8 +535,10 @@ class Data extends ChangeNotifier {
       bool isPhoto = jsonDecode(response.body)[i]['isPhoto'];
       String imageUrl = jsonDecode(response.body)[i]['imageUrl'];
       String uuid = jsonDecode(response.body)[i]['uuid'];
-      setMessage(
-          recieverId, msgText, senderId, isAdmin, isPhoto, imageUrl, uuid);
+      bool isReply = jsonDecode(response.body)[i]['isReply'];
+      String repliedTo = jsonDecode(response.body)[i]['repliedTo'];
+      setMessage(recieverId, msgText, senderId, isAdmin, isPhoto, imageUrl,
+          uuid, isReply, repliedTo);
     }
   }
 
@@ -583,14 +588,15 @@ class Data extends ChangeNotifier {
       print("Connected");
       socket.on("message", (msg) {
         setMessage(
-          msg['reciever_id'],
-          msg['message'],
-          msg["sender_id"],
-          false,
-          msg['isPhoto'],
-          msg['imageUrl'],
-          msg['uid'],
-        );
+            msg['reciever_id'],
+            msg['message'],
+            msg["sender_id"],
+            false,
+            msg['isPhoto'],
+            msg['imageUrl'],
+            msg['uid'],
+            msg['isReply'],
+            msg['repliedTo']);
         print('Working fine Connect');
       });
       socket.on('room_message', (roomMsg) {
@@ -605,6 +611,9 @@ class Data extends ChangeNotifier {
           roomMsg['imageUrl'],
           roomMsg['sender_name'],
         );
+        socket.on('delete_message', (data) {
+          messages.removeWhere((element) => element['uuid'] == data['uuid']);
+        });
       });
     });
     print(socket.connected);
@@ -631,14 +640,8 @@ class Data extends ChangeNotifier {
     print('working fine0123 sendRoomMessage');
   }
 
-  void sendMessage(
-    String message,
-    int senderId,
-    int recieverId,
-    bool isPhoto,
-    String imageUrl,
-    String uuid,
-  ) {
+  void sendMessage(String message, int senderId, int recieverId, bool isPhoto,
+      String imageUrl, String uuid, bool isReply, String repliedTo) {
     // String uuid = Uuid().v4();
     print('working fine sendMessage');
     socket.emit("message", {
@@ -647,7 +650,9 @@ class Data extends ChangeNotifier {
       "reciever_id": recieverId,
       "isPhoto": isPhoto,
       "imageUrl": imageUrl,
-      "uuid": uuid
+      "uuid": uuid,
+      "isReply": isReply,
+      "repliedTo": repliedTo
     });
   }
 
@@ -1167,6 +1172,8 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
       );
+
+      options.clear();
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         options.add(
           Optionsfero(
@@ -1193,9 +1200,11 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
       );
+      socket.emit('message_delete', {
+        "uuid": uuid,
+      });
     } catch (e) {
       print(e);
-      ;
     }
     notifyListeners();
   }

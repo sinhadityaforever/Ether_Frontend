@@ -9,12 +9,18 @@ class ChatBubble extends StatelessWidget {
     required this.isAdmin,
     required this.isPhoto,
     required this.imageUrl,
+    required this.uuid,
+    required this.isReply,
+    required this.replyTo,
   });
   final String texto;
   final bool isMe;
   final bool isAdmin;
   final bool isPhoto;
   final String imageUrl;
+  final String uuid;
+  final bool isReply;
+  final String replyTo;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +30,9 @@ class ChatBubble extends StatelessWidget {
       isAdmin: isAdmin,
       isPhoto: isPhoto,
       imageUrl: imageUrl,
+      isReply: isReply,
+      replyTo: replyTo,
+      uuid: uuid,
     );
   }
 }

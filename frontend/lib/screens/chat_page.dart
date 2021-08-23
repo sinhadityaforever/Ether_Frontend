@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/screens/profile_view_page.dart';
+import 'package:frontend/widgets/negative_popup.dart';
 import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,6 +15,8 @@ import 'package:provider/provider.dart';
 import '../widgets/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:swipe_to/swipe_to.dart';
 
 class ChatPageArguments {
   final String avatarUrl;
@@ -33,6 +36,8 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  bool isReplying = false;
+  final focusNode = FocusNode();
   ScrollController _controller1 = ScrollController();
   final storage = FirebaseStorage.instance;
   final ImagePicker _picker = ImagePicker();
@@ -48,8 +53,24 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
   }
 
+  void replyMessage(message) {
+    setState(() {
+      Provider.of<Data>(context, listen: false).repliedMessage = message;
+    });
+  }
+
+  void cancelReplyMessage(message) {
+    setState(() {
+      Provider.of<Data>(context, listen: false).repliedMessage = {};
+      isReplying = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Provider.of<Data>(context, listen: false).repliedMessage == {}
+    //     ? false
+    //     : true;
     int id = Provider.of<Data>(context, listen: false).idOfUser;
     final args =
         ModalRoute.of(context)!.settings.arguments as ChatPageArguments;
@@ -124,15 +145,49 @@ class _ChatPageState extends State<ChatPage> {
 
                 if (message['recieverId'] == args.recieverId ||
                     message['senderId'] == args.recieverId) {
-                  return ChatBubble(
-                    texto: message['message'],
-                    isMe: message['senderId'] ==
-                            Provider.of<Data>(context).idOfUser
-                        ? true
-                        : false,
-                    isAdmin: message['isAdmin'],
-                    isPhoto: message['isPhoto'],
-                    imageUrl: message['imageUrl'],
+                  return SwipeTo(
+                    onRightSwipe: () {
+                      setState(() {
+                        isReplying = true;
+                        replyMessage(message);
+                        focusNode.requestFocus();
+                        print(Provider.of<Data>(context, listen: false)
+                            .repliedMessage);
+                      });
+                    },
+                    onLeftSwipe: () {
+                      setState(() {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => NegativePopup(
+                            popuptext:
+                                'Do you want to remove the evidence of this message 🧐',
+                            onPresseedPopup: () {
+                              setState(() {
+                                Provider.of<Data>(context, listen: false)
+                                    .deleteMessage(message['uuid']);
+                                Navigator.pop(context);
+                              });
+                            },
+                            negativeTitle: 'Delete Message',
+                            action: 'Delete',
+                          ),
+                        );
+                      });
+                    },
+                    child: ChatBubble(
+                      texto: message['message'],
+                      isMe: message['senderId'] ==
+                              Provider.of<Data>(context).idOfUser
+                          ? true
+                          : false,
+                      isAdmin: message['isAdmin'],
+                      isPhoto: message['isPhoto'],
+                      imageUrl: message['imageUrl'],
+                      isReply: message['isReply'],
+                      replyTo: message['repliedTo'],
+                      uuid: message['uuid'],
+                    ),
                   );
                 } else {
                   return SizedBox(
@@ -149,74 +204,219 @@ class _ChatPageState extends State<ChatPage> {
                 child: Container(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Color(0xFF2A2F32),
-                        hintText: 'Type a message',
-                        hintStyle: TextStyle(
-                          color: Color(0xFFA9AAAC),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
+                    child: Column(
+                      children: [
+                        if (isReplying == true)
+                          Row(
+                            children: [
+                              InkWell(
+                                  child: Icon(Icons.close),
+                                  onTap: () {
+                                    setState(() {
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage,
+                                      );
+                                    });
+                                  }),
+                              ChatBubble(
+                                texto: Provider.of<Data>(context, listen: false)
+                                            .repliedMessage['message']
+                                            .length >
+                                        30
+                                    ? Provider.of<Data>(context, listen: false)
+                                            .repliedMessage['message']
+                                            .substring(0, 30) +
+                                        '....'
+                                    : Provider.of<Data>(context, listen: false)
+                                        .repliedMessage['message'],
+                                isMe: Provider.of<Data>(context, listen: false)
+                                            .repliedMessage['senderId'] ==
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser
+                                    ? true
+                                    : false,
+                                isAdmin:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedMessage['isAdmin'],
+                                isPhoto:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedMessage['isPhoto'],
+                                imageUrl:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedMessage['imageUrl'],
+                                uuid: Provider.of<Data>(context, listen: false)
+                                    .repliedMessage['uuid'],
+                                isReply:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedMessage['isReply'],
+                                replyTo:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedMessage['repliedTo'],
+                              ),
+                            ],
+                          )
+                        else
+                          SizedBox(
+                            height: 0,
                           ),
-                        ),
-                        suffixIcon: IconButton(
-                          color: Color(0xFFEB1555),
-                          icon: Icon(Icons.send),
-                          onPressed: () {
-                            String uuid = Uuid().v4();
-                            setState(() {
-                              Provider.of<Data>(context, listen: false)
-                                  .setMessage(
-                                args.recieverId,
-                                messageInField,
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser,
-                                false,
-                                false,
-                                'no image',
-                                uuid,
-                              );
-                              _controller1.animateTo(
-                                _controller1.position.maxScrollExtent + 100.h,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                              );
-
-                              Provider.of<Data>(context, listen: false)
-                                  .sendMessage(
-                                      messageInField,
+                        TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          focusNode: focusNode,
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xFF2A2F32),
+                            hintText: 'Type a message',
+                            hintStyle: TextStyle(
+                              color: Color(0xFFA9AAAC),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                            suffixIcon: IconButton(
+                              color: Color(0xFFEB1555),
+                              icon: Icon(Icons.send),
+                              onPressed: () {
+                                String uuid = Uuid().v4();
+                                setState(() {
+                                  if (isReplying == false) {
+                                    if (messageInField != '') {
                                       Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      args.recieverId,
-                                      false,
-                                      'no image',
-                                      uuid);
-                              _controller.clear();
-                              if (Provider.of<Data>(context, listen: false)
-                                  .karmaCheck(args.recieverId)) {
-                                Provider.of<Data>(context, listen: false)
-                                    .updateKarma(args.recieverId);
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) => Popup(
-                                    popupTitle: "Leveled up karma by 10",
-                                    popuptext: "You initiated the convo!!",
-                                  ),
-                                );
-                              }
-                            });
+                                          .setMessage(
+                                        args.recieverId,
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        false,
+                                        'no image',
+                                        uuid,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            100.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendMessage(
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.recieverId,
+                                        false,
+                                        'no image',
+                                        uuid,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage,
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            Popup(
+                                          popupTitle: "Type something bruh..😑",
+                                          popuptext: "😶",
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    if (messageInField != '') {
+                                      Provider.of<Data>(context, listen: false)
+                                          .setMessage(
+                                        args.recieverId,
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        false,
+                                        'no image',
+                                        uuid,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage['uuid'],
+                                      );
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            100.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendMessage(
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.recieverId,
+                                        false,
+                                        'no image',
+                                        uuid,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage['uuid'],
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage,
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            Popup(
+                                          popupTitle: "Type something bruh..😑",
+                                          popuptext: "😶",
+                                        ),
+                                      );
+                                    }
+                                  }
+
+                                  _controller.clear();
+                                  if (Provider.of<Data>(context, listen: false)
+                                      .karmaCheck(args.recieverId)) {
+                                    Provider.of<Data>(context, listen: false)
+                                        .updateKarma(args.recieverId);
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) => Popup(
+                                        popupTitle: "Leveled up karma by 10",
+                                        popuptext: "You initiated the convo!!",
+                                      ),
+                                    );
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                          onChanged: (value) {
+                            messageInField = value;
                           },
                         ),
-                      ),
-                      onChanged: (value) {
-                        messageInField = value;
-                      },
+                      ],
                     ),
                   ),
                 ),
@@ -329,36 +529,95 @@ class _ChatPageState extends State<ChatPage> {
                                     Provider.of<Data>(context, listen: false)
                                         .showIndicator = false;
                                   } else {
-                                    Provider.of<Data>(context, listen: false)
-                                        .setMessage(
-                                            args.recieverId,
-                                            'image',
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .idOfUser,
-                                            false,
-                                            true,
-                                            imageUrlChanged,
-                                            uuidImage);
-                                    print(imageUrlChanged + '7');
-                                    _controller1.animateTo(
-                                      _controller1.position.maxScrollExtent +
-                                          48.h,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
-                                    );
-                                    _controller.clear();
+                                    if (isReplying == false) {
+                                      Provider.of<Data>(context, listen: false)
+                                          .setMessage(
+                                        args.recieverId,
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        true,
+                                        imageUrlChanged,
+                                        uuidImage,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      print(imageUrlChanged + '7');
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            48.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+                                      _controller.clear();
 
-                                    Provider.of<Data>(context, listen: false)
-                                        .sendMessage(
-                                            'image',
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .idOfUser,
-                                            args.recieverId,
-                                            true,
-                                            imageUrlChanged,
-                                            uuidImage);
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendMessage(
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.recieverId,
+                                        true,
+                                        imageUrlChanged,
+                                        uuidImage,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage,
+                                      );
+                                    } else {
+                                      Provider.of<Data>(context, listen: false)
+                                          .setMessage(
+                                        args.recieverId,
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        true,
+                                        imageUrlChanged,
+                                        uuidImage,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage['uuid'],
+                                      );
+                                      print(imageUrlChanged + '7');
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            48.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+                                      _controller.clear();
+
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendMessage(
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.recieverId,
+                                        true,
+                                        imageUrlChanged,
+                                        uuidImage,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage['uuid'],
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage,
+                                      );
+                                    }
                                   }
                                   Navigator.pop(context);
                                 },
