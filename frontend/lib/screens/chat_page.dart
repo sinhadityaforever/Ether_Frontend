@@ -180,7 +180,9 @@ class _ChatPageState extends State<ChatPage> {
                                       false,
                                       false,
                                       'no image',
-                                      uuid);
+                                      uuid,
+                                      false,
+                                      'no_reply');
                               _controller1.animateTo(
                                 _controller1.position.maxScrollExtent + 100.h,
                                 duration: Duration(milliseconds: 300),
@@ -195,7 +197,9 @@ class _ChatPageState extends State<ChatPage> {
                                       args.recieverId,
                                       false,
                                       'no image',
-                                      uuid);
+                                      uuid,
+                                      false,
+                                      'no_reply');
                               _controller.clear();
                               if (Provider.of<Data>(context, listen: false)
                                   .karmaCheck(args.recieverId)) {
@@ -338,7 +342,9 @@ class _ChatPageState extends State<ChatPage> {
                                             false,
                                             true,
                                             imageUrlChanged,
-                                            uuidImage);
+                                            uuidImage,
+                                            false,
+                                            'no_reply');
                                     print(imageUrlChanged + '7');
                                     _controller1.animateTo(
                                       _controller1.position.maxScrollExtent +
@@ -357,7 +363,9 @@ class _ChatPageState extends State<ChatPage> {
                                             args.recieverId,
                                             true,
                                             imageUrlChanged,
-                                            uuidImage);
+                                            uuidImage,
+                                            false,
+                                            'no_reply');
                                   }
                                   Navigator.pop(context);
                                 },
