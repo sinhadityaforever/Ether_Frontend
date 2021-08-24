@@ -18,7 +18,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.104';
+  String ip = '192.168.0.194';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -46,7 +46,7 @@ class Data extends ChangeNotifier {
   int level = 0;
   int selectedRoomId = 0;
   List<ChatRoomModel> chatRooms = [];
-  List<RoomMessageModel> roomMessages = [];
+  // List<RoomMessageModel> roomMessages = [];
   List<int> roomId = [];
   final List<int> contactId = [];
   List<String> userInterests = [];
@@ -473,16 +473,7 @@ class Data extends ChangeNotifier {
   void setMessage(recieverId, message, senderId, isAdmin, isPhoto, imageUrl,
       uuid, isReply, repliedTo) {
     print('started Working');
-    // messages.add(
-    //   MessageModel(
-    //     message: message,
-    //     recieverId: recieverId,
-    //     senderId: senderId,
-    //     isAdmin: isAdmin,
-    //     isPhoto: isPhoto,
-    //     imageUrl: imageUrl,
-    //   ),
-    // );
+
     messages.add({
       'message': message,
       'recieverId': recieverId,
@@ -503,19 +494,21 @@ class Data extends ChangeNotifier {
     print('completed');
   }
 
-  void setRoomMessage(
-      roomId, message, senderId, isAdmin, isPhoto, imageUrl, senderName) {
-    roomMessages.add(
-      RoomMessageModel(
-        message: message,
-        roomId: roomId,
-        senderId: senderId,
-        isAdmin: isAdmin,
-        isPhoto: isPhoto,
-        imageUrl: imageUrl,
-        senderName: senderName,
-      ),
-    );
+  List<Map<String, dynamic>> roomMessages = [];
+  void setRoomMessage(roomId, message, senderId, isAdmin, isPhoto, imageUrl,
+      senderName, uuid, isReply, repliedTo) {
+    roomMessages.add({
+      'message': message,
+      'roomId': roomId,
+      'senderId': senderId,
+      'isAdmin': isAdmin,
+      'isPhoto': isPhoto,
+      'imageUrl': imageUrl,
+      'senderName': senderName,
+      'uuid': uuid,
+      'isReply': isReply,
+      'repliedTo': repliedTo
+    });
     notifyListeners();
   }
 
@@ -560,16 +553,12 @@ class Data extends ChangeNotifier {
       bool isPhoto = jsonDecode(response.body)[i]['is_photo'];
       String imageUrl = jsonDecode(response.body)[i]['photo_url'];
       String senderName = jsonDecode(response.body)[i]['username'];
+      String uuid = jsonDecode(response.body)[i]['uuid'];
+      String isReply = jsonDecode(response.body)[i]['is_reply'];
+      String repliedTo = jsonDecode(response.body)[i]['replied_to'];
 
-      setRoomMessage(
-        roomId,
-        msgText,
-        senderId,
-        isAdmin,
-        isPhoto,
-        imageUrl,
-        senderName,
-      );
+      setRoomMessage(roomId, msgText, senderId, isAdmin, isPhoto, imageUrl,
+          senderName, uuid, isReply, repliedTo);
     }
   }
 
@@ -604,16 +593,22 @@ class Data extends ChangeNotifier {
         //new
         print(roomMsg);
         setRoomMessage(
-          roomMsg['room_id'],
-          roomMsg['message'],
-          roomMsg['sender_id'],
-          false,
-          roomMsg['isPhoto'],
-          roomMsg['imageUrl'],
-          roomMsg['sender_name'],
-        );
+            roomMsg['room_id'],
+            roomMsg['message'],
+            roomMsg['sender_id'],
+            false,
+            roomMsg['isPhoto'],
+            roomMsg['imageUrl'],
+            roomMsg['sender_name'],
+            roomMsg['uuid'],
+            roomMsg['is_reply'],
+            roomMsg['replied_to']);
         socket.on('delete_message', (data) {
           messages.removeWhere((element) => element['uuid'] == data['uuid']);
+        });
+        socket.on('delete_room_message', (data) {
+          roomMessages
+              .removeWhere((element) => element['uuid'] == data['uuid']);
         });
       });
     });
@@ -627,6 +622,9 @@ class Data extends ChangeNotifier {
     bool isPhoto,
     String imageUrl,
     String senderName,
+    String uuid,
+    bool isReply,
+    String repliedTo,
   ) {
     print(roomId.toString() +
         "fdfdfdfdfdfedfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd");
@@ -637,6 +635,9 @@ class Data extends ChangeNotifier {
       "isPhoto": isPhoto,
       "imageUrl": imageUrl,
       "sender_name": senderName,
+      'uuid': uuid,
+      'isReply': isReply,
+      'repliedTo': repliedTo
     });
     print('working fine0123 sendRoomMessage');
   }
@@ -1191,7 +1192,7 @@ class Data extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteMessage(String uuid) async {
+  Future<void> deleteMessage(String uuid, int recieverId) async {
     messages.removeWhere((element) => element['uuid'] == uuid);
     try {
       await http.delete(
@@ -1202,12 +1203,30 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
       );
-      socket.emit('message_delete', {
-        "uuid": uuid,
-      });
     } catch (e) {
       print(e);
     }
+    socket.emit('delete_message', {"uuid": uuid, "recieverId": recieverId});
+    print('sent emit request');
+    notifyListeners();
+  }
+
+  Future<void> deleteRoomMessage(String uuid, int roomId) async {
+    roomMessages.removeWhere((element) => element['uuid'] == uuid);
+    try {
+      await http.delete(
+        Uri.parse('http://$ip:5000/room/$uuid'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+    socket.emit('delete_room_message', {"uuid": uuid, "roomId": roomId});
+    print('sent emit request');
     notifyListeners();
   }
 

@@ -165,7 +165,8 @@ class _ChatPageState extends State<ChatPage> {
                             onPresseedPopup: () {
                               setState(() {
                                 Provider.of<Data>(context, listen: false)
-                                    .deleteMessage(message['uuid']);
+                                    .deleteMessage(
+                                        message['uuid'], args.recieverId);
                                 Navigator.pop(context);
                               });
                             },
