@@ -122,6 +122,8 @@ class _RoomChatPageState extends State<RoomChatPage> {
                         isReplying = true;
                         replyMessage(message);
                         focusNode.requestFocus();
+                        print(
+                            Provider.of<Data>(context).repliedMessage['uuid']);
                       });
                     },
                     onLeftSwipe: () {

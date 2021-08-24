@@ -1225,4 +1225,10 @@ class Data extends ChangeNotifier {
     print('sent emit request');
     notifyListeners();
   }
+
+  String replyFinder(uuid) {
+    Map<String, dynamic> replyMessage =
+        roomMessages.singleWhere((element) => element['uuid'] == uuid);
+    return replyMessage['message'];
+  }
 }

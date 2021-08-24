@@ -107,12 +107,14 @@ class roomChatty extends StatelessWidget {
                       topRight: Radius.circular(10.0.r),
                     ),
                   ),
-                  child: Text(
-                    Provider.of<Data>(context, listen: false)
-                        .roomMessages
-                        .singleWhere((elementq) =>
-                            elementq['uuid'] == replyTo)['message'],
-                  ),
+                  child: Text(Provider.of<Data>(context, listen: false)
+                          .replyFinder(Provider.of<Data>(context, listen: false)
+                              .repliedMessage['uuid'])
+                      // Provider.of<Data>(context, listen: false)
+                      //     .roomMessages
+                      //     .singleWhere((elementq) =>
+                      //         elementq['uuid'] == replyTo)['message'],
+                      ),
                 ),
               ),
             Material(
