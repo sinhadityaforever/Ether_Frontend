@@ -155,8 +155,9 @@ class _ChatPageState extends State<ChatPage> {
                     onLeftSwipe: () {
                       setState(() {
                         if (message['senderId'] ==
-                            Provider.of<Data>(context, listen: false)
-                                .idOfUser) {
+                                Provider.of<Data>(context, listen: false)
+                                    .idOfUser &&
+                            message['isAdmin'] == false) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => NegativePopup(

@@ -17,7 +17,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.104';
+  String ip = '192.168.0.194';
   String uid = '';
   late final User googleUser;
   var signupEmail;
