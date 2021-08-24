@@ -605,6 +605,10 @@ class Data extends ChangeNotifier {
         socket.on('delete_message', (data) {
           messages.removeWhere((element) => element['uuid'] == data['uuid']);
         });
+        socket.on('delete_room_message', (data) {
+          roomMessages
+              .removeWhere((element) => element['uuid'] == data['uuid']);
+        });
       });
     });
     print(socket.connected);
@@ -1201,6 +1205,25 @@ class Data extends ChangeNotifier {
       print(e);
     }
     socket.emit('delete_message', {"uuid": uuid, "recieverId": recieverId});
+    print('sent emit request');
+    notifyListeners();
+  }
+
+  Future<void> deleteRoomMessage(String uuid, int roomId) async {
+    roomMessages.removeWhere((element) => element['uuid'] == uuid);
+    try {
+      await http.delete(
+        Uri.parse('http://$ip:5000/room/$uuid'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+    socket.emit('delete_room_message', {"uuid": uuid, "roomId": roomId});
     print('sent emit request');
     notifyListeners();
   }
