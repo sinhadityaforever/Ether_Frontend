@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'chatroom.dart';
 import 'contacts.dart';
 import 'feed.dart';
-import 'self_profile_view.dart';
 import '../main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -108,7 +107,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       onSelected: (value) {
                         if (value == 'Profile') {
-                          Navigator.pushNamed(context, '/selfProfileView');
+                          Navigator.pushNamed(
+                            context,
+                            '/selfProfileView',
+                          );
                         }
                         if (value == 'Karma levels') {
                           Navigator.pushNamed(context, '/karmalevels');

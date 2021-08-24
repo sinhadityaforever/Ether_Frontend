@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ import 'screens/signup_set/signupotp.dart';
 import 'screens/signup_set/otpverify.dart';
 import 'screens/signup_set/confirm_account.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -47,6 +49,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
 }
 
+FirebaseAnalytics analytics = FirebaseAnalytics();
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
   'High Importance Notifications', // title
@@ -128,6 +131,9 @@ class _MyAppState extends State<MyApp> {
                   primaryColor: Color(0xFF0A0E21),
                 ),
                 initialRoute: '/logo',
+                navigatorObservers: [
+                  FirebaseAnalyticsObserver(analytics: analytics),
+                ],
                 debugShowCheckedModeBanner: false,
                 routes: {
                   '/confirmAccount': (context) => ConfirmAccount(),

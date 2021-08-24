@@ -11,12 +11,13 @@ class ChatListTile extends StatefulWidget {
   final onPressedChatTile;
   final int recieverId;
 
-  ChatListTile(
-      {required this.onPressedChatTile,
-      required this.name,
-      required this.imageUrl,
-      required this.lastMessage,
-      required this.recieverId});
+  ChatListTile({
+    required this.onPressedChatTile,
+    required this.name,
+    required this.imageUrl,
+    required this.lastMessage,
+    required this.recieverId,
+  });
   @override
   _ChatState createState() => _ChatState();
 }
@@ -53,7 +54,9 @@ class _ChatState extends State<ChatListTile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.name,
+                        widget.name.length > 15
+                            ? widget.name.substring(0, 15)
+                            : widget.name,
                         style: TextStyle(
                           fontSize: 17.sp,
                         ),

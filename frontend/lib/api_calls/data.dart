@@ -83,6 +83,7 @@ class Data extends ChangeNotifier {
         await getInterest();
         await getSelfInterest();
         await scheduleMatches();
+        await getRooms();
         await getMessage();
         await getContacts();
 
@@ -120,7 +121,7 @@ class Data extends ChangeNotifier {
         await readUser();
         print('t3');
         await sendNotifToken();
-        print('t4');
+        await getRooms();
 
         Navigator.of(context).pushNamedAndRemoveUntil(
             '/entryScreen', (Route<dynamic> route) => false);
@@ -1115,6 +1116,7 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
       );
+      chatRooms.clear();
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         print(jsonDecode(response.body)[i]['room_id'].toString() + "fuck ya");
         chatRooms.add(

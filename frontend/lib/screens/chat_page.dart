@@ -224,10 +224,10 @@ class _ChatPageState extends State<ChatPage> {
                                 texto: Provider.of<Data>(context, listen: false)
                                             .repliedMessage['message']
                                             .length >
-                                        30
+                                        25
                                     ? Provider.of<Data>(context, listen: false)
                                             .repliedMessage['message']
-                                            .substring(0, 30) +
+                                            .substring(0, 25) +
                                         '....'
                                     : Provider.of<Data>(context, listen: false)
                                         .repliedMessage['message'],

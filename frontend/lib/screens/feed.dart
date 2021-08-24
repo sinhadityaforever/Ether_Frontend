@@ -51,7 +51,8 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   topRight: Radius.circular(30.r),
                                 ),
                                 child: Image(
-                                  height: 350.h,
+                                  fit: BoxFit.fitWidth,
+                                  height: 300.h,
                                   width: double.infinity,
                                   image: NetworkImage(
                                     Provider.of<Data>(context, listen: false)
@@ -86,7 +87,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                       .replaceAll("20", '\n\n\u2022 '),
                                   style: TextStyle(
                                     fontSize: 17.sp,
-                                    color: Colors.white54,
+                                    color: Colors.white60,
                                   ),
                                 ),
                               ),
@@ -96,71 +97,94 @@ class _QuestionFeedState extends State<QuestionFeed> {
                       ),
                     );
                   } else {
-                    Provider.of<Data>(context, listen: false).getOptions(
-                        Provider.of<Data>(context, listen: false)
-                            .feedCards[index]
-                            .id);
-
-                    return Card(
-                      margin: EdgeInsets.all(20.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 20,
-                      shadowColor: Colors.black,
-                      color: Color(0xFF111328),
-                      child: Column(
-                        children: [
-                          if (Provider.of<Data>(context, listen: false)
-                                  .feedCards[index]
-                                  .imageUrl ==
-                              'no image')
-                            SizedBox(height: 0)
-                          else
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(30.r),
-                                  topRight: Radius.circular(30.r),
-                                ),
-                                child: Image(
-                                  height: 300.h,
-                                  width: double.infinity,
-                                  image: NetworkImage(
-                                    Provider.of<Data>(context, listen: false)
-                                        .feedCards[index]
-                                        .imageUrl,
-                                  ),
-                                ),
-                              ),
+                    return FutureBuilder(
+                      future: Provider.of<Data>(context, listen: false)
+                          .getOptions(Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .id),
+                      builder: (context, snap) {
+                        if (snap.connectionState == ConnectionState.done) {
+                          return Card(
+                            margin: EdgeInsets.all(20.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                          Column(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                child: Text(
-                                  Provider.of<Data>(context, listen: false)
-                                      .feedCards[index]
-                                      .heading,
-                                  style: TextStyle(
-                                    fontSize: 25.sp,
-                                    color: Color(0xFFEB1555),
+                            elevation: 20,
+                            shadowColor: Colors.black,
+                            color: Color(0xFF111328),
+                            child: Column(
+                              children: [
+                                if (Provider.of<Data>(context, listen: false)
+                                        .feedCards[index]
+                                        .imageUrl ==
+                                    'no image')
+                                  SizedBox(height: 0)
+                                else
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30.r),
+                                        topRight: Radius.circular(30.r),
+                                      ),
+                                      child: Image(
+                                        fit: BoxFit.fitWidth,
+                                        height: 300.h,
+                                        width: double.infinity,
+                                        image: NetworkImage(
+                                          Provider.of<Data>(
+                                            context,
+                                            listen: false,
+                                          ).feedCards[index].imageUrl,
+                                        ),
+                                      ),
+                                    ),
                                   ),
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        10,
+                                        0,
+                                        10,
+                                        0,
+                                      ),
+                                      child: Text(
+                                        Provider.of<Data>(
+                                          context,
+                                          listen: false,
+                                        ).feedCards[index].heading,
+                                        style: TextStyle(
+                                          fontSize: 25.sp,
+                                          color: Color(0xFFEB1555),
+                                        ),
+                                      ),
+                                    ),
+                                    Column(
+                                      children: [
+                                        OptionTile(
+                                          optionText: 'A',
+                                          optionSerial: 0,
+                                        ),
+                                        OptionTile(
+                                          optionText: 'B',
+                                          optionSerial: 1,
+                                        ),
+                                        OptionTile(
+                                          optionText: 'C',
+                                          optionSerial: 2,
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              ),
-                              Column(
-                                children: [
-                                  OptionTile(optionText: 'A', optionSerial: 0),
-                                  OptionTile(optionText: 'B', optionSerial: 1),
-                                  OptionTile(optionText: 'C', optionSerial: 2),
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
                     );
                   }
                 });
