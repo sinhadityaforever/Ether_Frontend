@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/option.dart';
-import 'package:frontend/models/room_message_model.dart';
 import 'package:frontend/models/screening.dart';
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
@@ -18,7 +17,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.104';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -54,6 +53,7 @@ class Data extends ChangeNotifier {
   List<InterestModel> generatedInterests = [];
   List<String> generatedInterestsText = [];
   Map<String, dynamic> repliedMessage = {};
+  Map<String, dynamic> repliedroomMessage = {};
   String notifToken = '';
   String bioOfUser = '';
   String avatarUrlOfUser =
@@ -1229,13 +1229,4 @@ class Data extends ChangeNotifier {
     print('sent emit request');
     notifyListeners();
   }
-
-  // void checkAnswer(Optionsfero option, bool isAnswer) {
-  //   if (isAnswer == true) {
-  //     option.isAnswer = 1;
-  //   } else {
-  //     option.isAnswer = 2;
-  //   }
-  //   notifyListeners();
-  // }
 }

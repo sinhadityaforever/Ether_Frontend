@@ -6,12 +6,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/widgets/negative_popup.dart';
+import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/room_chat_bubble.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:swipe_to/swipe_to.dart';
 
 class ChatRoomPageArguments {
   final String roomAvatarUrl;
@@ -31,6 +35,8 @@ class RoomChatPage extends StatefulWidget {
 }
 
 class _RoomChatPageState extends State<RoomChatPage> {
+  bool isReplying = false;
+  final focusNode = FocusNode();
   ScrollController _controller1 = ScrollController();
   final storage = FirebaseStorage.instance;
   final ImagePicker _picker = ImagePicker();
@@ -42,6 +48,19 @@ class _RoomChatPageState extends State<RoomChatPage> {
         () => _controller1
             .jumpTo(_controller1.position.maxScrollExtent + 10000.h));
     super.initState();
+  }
+
+  void replyMessage(message) {
+    setState(() {
+      Provider.of<Data>(context, listen: false).repliedroomMessage = message;
+    });
+  }
+
+  void cancelReplyMessage(message) {
+    setState(() {
+      Provider.of<Data>(context, listen: false).repliedroomMessage = {};
+      isReplying = false;
+    });
   }
 
   @override
@@ -97,39 +116,76 @@ class _RoomChatPageState extends State<RoomChatPage> {
                 final message = Provider.of<Data>(context).roomMessages[index];
 
                 if (message['roomId'] == args.roomId) {
-                  return RoomChatBubble(
-                    texto: message['message'],
-                    isMe: message['senderId'] ==
-                            Provider.of<Data>(context).idOfUser
-                        ? true
-                        : false,
-                    isAdmin: message['isAdmin'],
-                    isPhoto: message['isPhoto'],
-                    imageUrl: message['imageUrl'],
-                    senderName: message['senderName'],
-                    // showProfileCallback: Navigator.pushNamed(
-                    //   context,
-                    //   '//roomProfileView',
-                    //   arguments: RoomProfileViewArgs(
-                    //     name: Provider.of<Data>(context, listen: false)
-                    //         .profileView[0]
-                    //         .name,
-                    //     imageUrl: Provider.of<Data>(context, listen: false)
-                    //         .profileView[0]
-                    //         .imageUrl,
-                    //     aboutValue: Provider.of<Data>(context, listen: false)
-                    //         .profileView[0]
-                    //         .aboutValue,
-                    //     interestValue: Provider.of<Data>(context, listen: false)
-                    //         .contactInterestInterpolated,
-                    //     level: Provider.of<Data>(context, listen: false)
-                    //         .profileView[0]
-                    //         .level,
-                    //     karmaNumber: Provider.of<Data>(context, listen: false)
-                    //         .profileView[0]
-                    //         .karmaNumber,
-                    //   ),
-                    // ),
+                  return SwipeTo(
+                    onRightSwipe: () {
+                      setState(() {
+                        isReplying = true;
+                        replyMessage(message);
+                        focusNode.requestFocus();
+                      });
+                    },
+                    onLeftSwipe: () {
+                      setState(() {
+                        if (message['senderId'] ==
+                            Provider.of<Data>(context, listen: false)
+                                .idOfUser) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => NegativePopup(
+                              popuptext:
+                                  'Do you want to remove the evidence of this message 🧐',
+                              onPresseedPopup: () {
+                                setState(() {
+                                  Provider.of<Data>(context, listen: false)
+                                      .deleteRoomMessage(
+                                          message['uuid'], args.roomId);
+                                  Navigator.pop(context);
+                                });
+                              },
+                              negativeTitle: 'Delete Message',
+                              action: 'Delete',
+                            ),
+                          );
+                        }
+                      });
+                    },
+                    child: RoomChatBubble(
+                      texto: message['message'],
+                      isMe: message['senderId'] ==
+                              Provider.of<Data>(context).idOfUser
+                          ? true
+                          : false,
+                      isAdmin: message['isAdmin'],
+                      isPhoto: message['isPhoto'],
+                      imageUrl: message['imageUrl'],
+                      senderName: message['senderName'],
+                      isReply: message['isReply'],
+                      replyTo: message['repliedTo'],
+                      roomuuid: message['uuid'],
+                      // showProfileCallback: Navigator.pushNamed(
+                      //   context,
+                      //   '//roomProfileView',
+                      //   arguments: RoomProfileViewArgs(
+                      //     name: Provider.of<Data>(context, listen: false)
+                      //         .profileView[0]
+                      //         .name,
+                      //     imageUrl: Provider.of<Data>(context, listen: false)
+                      //         .profileView[0]
+                      //         .imageUrl,
+                      //     aboutValue: Provider.of<Data>(context, listen: false)
+                      //         .profileView[0]
+                      //         .aboutValue,
+                      //     interestValue: Provider.of<Data>(context, listen: false)
+                      //         .contactInterestInterpolated,
+                      //     level: Provider.of<Data>(context, listen: false)
+                      //         .profileView[0]
+                      //         .level,
+                      //     karmaNumber: Provider.of<Data>(context, listen: false)
+                      //         .profileView[0]
+                      //         .karmaNumber,
+                      //   ),
+                      // ),
+                    ),
                   );
                 } else {
                   return SizedBox(
@@ -146,70 +202,219 @@ class _RoomChatPageState extends State<RoomChatPage> {
                 child: Container(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Color(0xFF2A2F32),
-                        hintText: 'Type a message',
-                        hintStyle: TextStyle(
-                          color: Color(0xFFA9AAAC),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
+                    child: Column(
+                      children: [
+                        if (isReplying == true)
+                          Row(
+                            children: [
+                              InkWell(
+                                  child: Icon(Icons.close),
+                                  onTap: () {
+                                    setState(() {
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage,
+                                      );
+                                    });
+                                  }),
+                              RoomChatBubble(
+                                texto: Provider.of<Data>(context, listen: false)
+                                            .repliedroomMessage['message']
+                                            .length >
+                                        25
+                                    ? Provider.of<Data>(context, listen: false)
+                                            .repliedroomMessage['message']
+                                            .substring(0, 25) +
+                                        '....'
+                                    : Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['message'],
+                                isMe: Provider.of<Data>(context, listen: false)
+                                            .repliedroomMessage['senderId'] ==
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser
+                                    ? true
+                                    : false,
+                                isAdmin:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['isAdmin'],
+                                isPhoto:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['isPhoto'],
+                                imageUrl:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['imageUrl'],
+                                roomuuid:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['uuid'],
+                                isReply:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['isReply'],
+                                replyTo:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['repliedTo'],
+                                senderName:
+                                    Provider.of<Data>(context, listen: false)
+                                        .repliedroomMessage['senderName'],
+                              ),
+                            ],
+                          )
+                        else
+                          SizedBox(
+                            height: 0,
                           ),
-                        ),
-                        suffixIcon: IconButton(
-                          color: Color(0xFFEB1555),
-                          icon: Icon(Icons.send),
-                          onPressed: () {
-                            String uuid = Uuid().v4();
-                            setState(() {
-                              print(args.roomId.toString() + "bitch");
-                              Provider.of<Data>(context, listen: false)
-                                  .setRoomMessage(
-                                      args.roomId,
-                                      messageInField,
+                        TextFormField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xFF2A2F32),
+                            hintText: 'Type a message',
+                            hintStyle: TextStyle(
+                              color: Color(0xFFA9AAAC),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                            suffixIcon: IconButton(
+                              color: Color(0xFFEB1555),
+                              icon: Icon(Icons.send),
+                              onPressed: () {
+                                String uuid = Uuid().v4();
+                                setState(() {
+                                  if (isReplying == false) {
+                                    if (messageInField != '') {
                                       Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      false,
-                                      false,
-                                      'no image',
-                                      Provider.of<Data>(context, listen: false)
-                                          .nameOfUser,
-                                      uuid,
-                                      false,
-                                      'no_reply');
-                              _controller1.animateTo(
-                                _controller1.position.maxScrollExtent + 100.h,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                              );
+                                          .setRoomMessage(
+                                        args.roomId,
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        false,
+                                        'no image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuid,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            100.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
 
-                              Provider.of<Data>(context, listen: false)
-                                  .sendRoomMessage(
-                                      messageInField,
                                       Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      args.roomId,
-                                      false,
-                                      'no image',
+                                          .sendRoomMessage(
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.roomId,
+                                        false,
+                                        'no image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuid,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage,
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            Popup(
+                                          popupTitle: "Type something bruh..😑",
+                                          popuptext: "😶",
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    if (messageInField != '') {
                                       Provider.of<Data>(context, listen: false)
-                                          .nameOfUser,
-                                      uuid,
-                                      false,
-                                      'no_reply');
-                              _controller.clear();
-                            });
+                                          .setRoomMessage(
+                                        args.roomId,
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        false,
+                                        'no image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuid,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage['uuid'],
+                                      );
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            100.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendRoomMessage(
+                                        messageInField,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.roomId,
+                                        false,
+                                        'no image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuid,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage['uuid'],
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage,
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            Popup(
+                                          popupTitle: "Type something bruh..😑",
+                                          popuptext: "😶",
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  _controller.clear();
+                                });
+                              },
+                            ),
+                          ),
+                          onChanged: (value) {
+                            messageInField = value;
                           },
                         ),
-                      ),
-                      onChanged: (value) {
-                        messageInField = value;
-                      },
+                      ],
                     ),
                   ),
                 ),
@@ -322,46 +527,105 @@ class _RoomChatPageState extends State<RoomChatPage> {
                                     Provider.of<Data>(context, listen: false)
                                         .showIndicator = false;
                                   } else {
-                                    Provider.of<Data>(context, listen: false)
-                                        .setRoomMessage(
-                                            args.roomId,
-                                            'image',
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .idOfUser,
-                                            false,
-                                            true,
-                                            imageUrlChanged,
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .nameOfUser,
-                                            uuidImage,
-                                            false,
-                                            'no_reply');
-                                    print(imageUrlChanged + '7');
-                                    _controller1.animateTo(
-                                      _controller1.position.maxScrollExtent +
-                                          48.h,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
-                                    );
-                                    _controller.clear();
+                                    if (isReplying == false) {
+                                      Provider.of<Data>(context, listen: false)
+                                          .setRoomMessage(
+                                        args.roomId,
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        true,
+                                        imageUrlChanged,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuidImage,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      print(imageUrlChanged + '7');
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            48.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+                                      _controller.clear();
 
-                                    Provider.of<Data>(context, listen: false)
-                                        .sendRoomMessage(
-                                            'image',
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .idOfUser,
-                                            args.roomId,
-                                            true,
-                                            imageUrlChanged,
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .nameOfUser,
-                                            uuidImage,
-                                            false,
-                                            'no_reply');
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendRoomMessage(
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.roomId,
+                                        true,
+                                        imageUrlChanged,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuidImage,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage,
+                                      );
+                                    } else {
+                                      Provider.of<Data>(context, listen: false)
+                                          .setRoomMessage(
+                                        args.roomId,
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        false,
+                                        true,
+                                        imageUrlChanged,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuidImage,
+                                        false,
+                                        'no_reply',
+                                      );
+                                      print(imageUrlChanged + '7');
+                                      _controller1.animateTo(
+                                        _controller1.position.maxScrollExtent +
+                                            48.h,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOut,
+                                      );
+                                      _controller.clear();
+
+                                      Provider.of<Data>(context, listen: false)
+                                          .sendRoomMessage(
+                                        'image',
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .idOfUser,
+                                        args.roomId,
+                                        true,
+                                        imageUrlChanged,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .nameOfUser,
+                                        uuidImage,
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage['uuid'],
+                                      );
+                                      cancelReplyMessage(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedMessage,
+                                      );
+                                    }
                                   }
                                   Navigator.pop(context);
                                 },

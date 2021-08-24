@@ -68,9 +68,6 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Provider.of<Data>(context, listen: false).repliedMessage == {}
-    //     ? false
-    //     : true;
     int id = Provider.of<Data>(context, listen: false).idOfUser;
     final args =
         ModalRoute.of(context)!.settings.arguments as ChatPageArguments;
@@ -157,23 +154,27 @@ class _ChatPageState extends State<ChatPage> {
                     },
                     onLeftSwipe: () {
                       setState(() {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => NegativePopup(
-                            popuptext:
-                                'Do you want to remove the evidence of this message 🧐',
-                            onPresseedPopup: () {
-                              setState(() {
-                                Provider.of<Data>(context, listen: false)
-                                    .deleteMessage(
-                                        message['uuid'], args.recieverId);
-                                Navigator.pop(context);
-                              });
-                            },
-                            negativeTitle: 'Delete Message',
-                            action: 'Delete',
-                          ),
-                        );
+                        if (message['senderId'] ==
+                            Provider.of<Data>(context, listen: false)
+                                .idOfUser) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => NegativePopup(
+                              popuptext:
+                                  'Do you want to remove the evidence of this message 🧐',
+                              onPresseedPopup: () {
+                                setState(() {
+                                  Provider.of<Data>(context, listen: false)
+                                      .deleteMessage(
+                                          message['uuid'], args.recieverId);
+                                  Navigator.pop(context);
+                                });
+                              },
+                              negativeTitle: 'Delete Message',
+                              action: 'Delete',
+                            ),
+                          );
+                        }
                       });
                     },
                     child: ChatBubble(
@@ -589,7 +590,7 @@ class _ChatPageState extends State<ChatPage> {
                                                 listen: false)
                                             .repliedMessage['uuid'],
                                       );
-                                      print(imageUrlChanged + '7');
+
                                       _controller1.animateTo(
                                         _controller1.position.maxScrollExtent +
                                             48.h,

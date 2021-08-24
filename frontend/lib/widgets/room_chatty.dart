@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/screens/photo.dart';
 import 'package:linkable/linkable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
-class roomChatty extends StatefulWidget {
+class roomChatty extends StatelessWidget {
   const roomChatty({
     required this.isMe,
     required this.texto,
@@ -11,6 +13,9 @@ class roomChatty extends StatefulWidget {
     required this.isPhoto,
     required this.imageUrl,
     required this.senderName,
+    required this.roomuuid,
+    required this.isReply,
+    required this.replyTo,
     // required this.showProfileCallback,
   });
 
@@ -20,31 +25,28 @@ class roomChatty extends StatefulWidget {
   final bool isPhoto;
   final String imageUrl;
   final String senderName;
+  final String roomuuid;
+  final bool isReply;
+  final String replyTo;
   // final showProfileCallback;
 
-  @override
-  _roomChattyState createState() => _roomChattyState();
-}
-
-class _roomChattyState extends State<roomChatty> {
-  @override
   Widget build(BuildContext context) {
-    if (widget.isPhoto) {
+    if (isPhoto) {
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(
             context,
             '/photo',
-            arguments: PhotoArguments(imageUrl: widget.imageUrl),
+            arguments: PhotoArguments(imageUrl: imageUrl),
           );
         },
         child: Align(
-          alignment: widget.isMe ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Container(
               decoration: BoxDecoration(
-                color: widget.isMe ? Color(0xFF94002C) : Color(0xFFEB1555),
+                color: isMe ? Color(0xFF94002C) : Color(0xFFEB1555),
                 borderRadius: BorderRadius.circular(10),
               ),
               height: MediaQuery.of(context).size.height / 3.0,
@@ -54,14 +56,14 @@ class _roomChattyState extends State<roomChatty> {
                 margin: EdgeInsets.all(3.r),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                    topLeft: widget.isAdmin
+                    topLeft: isAdmin
                         ? Radius.circular(10.0.r)
-                        : widget.isMe
+                        : isMe
                             ? Radius.circular(10.0.r)
                             : Radius.circular(0),
-                    topRight: widget.isAdmin
+                    topRight: isAdmin
                         ? Radius.circular(10.0.r)
-                        : widget.isMe
+                        : isMe
                             ? Radius.circular(0)
                             : Radius.circular(10.0.r),
                     bottomLeft: Radius.circular(10.0.r),
@@ -69,7 +71,7 @@ class _roomChattyState extends State<roomChatty> {
                   ),
                 ),
                 child: Image(
-                  image: NetworkImage(widget.imageUrl),
+                  image: NetworkImage(imageUrl),
                 ),
               ),
             ),
@@ -80,30 +82,58 @@ class _roomChattyState extends State<roomChatty> {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: widget.isAdmin == true
+          crossAxisAlignment: isAdmin == true
               ? CrossAxisAlignment.center
               : CrossAxisAlignment.end,
-          textDirection: widget.isMe ? TextDirection.ltr : TextDirection.rtl,
+          textDirection: isMe ? TextDirection.ltr : TextDirection.rtl,
           children: [
+            if (isReply == true)
+              InkWell(
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isAdmin
+                        ? Color(0xFF056162)
+                        : isMe
+                            ? Color(0xFF862E48)
+                            : Color(0xFF2A2F32),
+                    borderRadius: BorderRadius.only(
+                      bottomRight: isAdmin
+                          ? Radius.circular(10.0.r)
+                          : isMe
+                              ? Radius.circular(0)
+                              : Radius.circular(10.0.r),
+                      topLeft: Radius.circular(10.0.r),
+                      topRight: Radius.circular(10.0.r),
+                    ),
+                  ),
+                  child: Text(
+                    Provider.of<Data>(context, listen: false)
+                        .roomMessages
+                        .singleWhere((elementq) =>
+                            elementq['uuid'] == replyTo)['message'],
+                  ),
+                ),
+              ),
             Material(
               borderRadius: BorderRadius.only(
-                topLeft: widget.isAdmin
+                topLeft: isAdmin
                     ? Radius.circular(10.0.r)
-                    : widget.isMe
+                    : isMe
                         ? Radius.circular(10.0.r)
                         : Radius.circular(0),
-                topRight: widget.isAdmin
+                topRight: isAdmin
                     ? Radius.circular(10.0.r)
-                    : widget.isMe
+                    : isMe
                         ? Radius.circular(0)
                         : Radius.circular(10.0.r),
                 bottomLeft: Radius.circular(10.0.r),
                 bottomRight: Radius.circular(10.0.r),
               ),
               elevation: 5.0,
-              color: widget.isAdmin
+              color: isAdmin
                   ? Color(0xFF056162)
-                  : widget.isMe
+                  : isMe
                       ? Color(0xFF94002C)
                       : Color(0xFF131C21),
               child: Padding(
@@ -111,49 +141,14 @@ class _roomChattyState extends State<roomChatty> {
                   vertical: 10.0,
                   horizontal: 20.0,
                 ),
-                child: Column(
-                  crossAxisAlignment: widget.isMe
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      children: [
-                        if (widget.isMe)
-                          Text(
-                            'Me',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white60,
-                            ),
-                          )
-                        else
-                          InkWell(
-                            onTap: () {
-                              // widget.showProfileCallback;
-                            },
-                            child: Text(
-                              widget.senderName,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white60,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Linkable(
-                      text: widget.texto,
-                      textColor: Colors.white,
-                      linkColor: widget.isMe ? Colors.black : Color(0xFFEB1555),
-                      style: TextStyle(
-                        fontSize: 17.0.sp,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+                child: Linkable(
+                  text: texto,
+                  textColor: Colors.white,
+                  linkColor: isMe ? Colors.black : Color(0xFFEB1555),
+                  style: TextStyle(
+                    fontSize: 17.0.sp,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

@@ -5,8 +5,6 @@ import 'package:linkable/linkable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import 'negative_popup.dart';
-
 class chatty extends StatelessWidget {
   const chatty({
     required this.uuid,
@@ -137,7 +135,9 @@ class chatty extends StatelessWidget {
                       : Color(0xFF131C21),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 20.0),
+                  vertical: 10.0,
+                  horizontal: 20.0,
+                ),
                 child: Linkable(
                   text: texto,
                   textColor: Colors.white,
