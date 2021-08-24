@@ -21,7 +21,7 @@ class _ChatRoomContactPageState extends State<ChatRoomContactPage> {
             name: chatRoom.name,
             imageUrl: chatRoom.imageUrl,
             lastMessage:
-                Provider.of<Data>(context).getlastMessage(chatRoom.roomId),
+                Provider.of<Data>(context).getlastRoomMessage(chatRoom.roomId),
             recieverId: 0,
             onPressedChatTile: () {
               Provider.of<Data>(context, listen: false)
@@ -33,7 +33,6 @@ class _ChatRoomContactPageState extends State<ChatRoomContactPage> {
               );
               Provider.of<Data>(context, listen: false).selectedRoomId =
                   chatRoom.roomId;
-              print(chatRoom.roomId.toString() + 'boobs');
 
               Navigator.pushNamed(
                 context,

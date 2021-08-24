@@ -85,7 +85,10 @@ class _AvatarState extends State<Avatar> {
                     Provider.of<Data>(context, listen: false).changeIndicator();
                     final pickedFile = await _picker.pickImage(
                         source: ImageSource.camera, imageQuality: 30);
-
+                    if (pickedFile == null) {
+                      Provider.of<Data>(context, listen: false)
+                          .changeIndicator();
+                    }
                     var snapshot = await storage
                         .ref()
                         .child('ProfilePicture/$id')
@@ -95,9 +98,11 @@ class _AvatarState extends State<Avatar> {
 
                     print(imageUrl + 'This is image url');
                     await Provider.of<Data>(context, listen: false).updateSelf(
-                        Provider.of<Data>(context, listen: false).nameOfUser,
-                        Provider.of<Data>(context, listen: false).bioOfUser,
-                        imageUrl);
+                      Provider.of<Data>(context, listen: false).nameOfUser,
+                      Provider.of<Data>(context, listen: false).bioOfUser,
+                      imageUrl,
+                    );
+
                     Provider.of<Data>(context, listen: false).changeIndicator();
                   },
                   icon: Icon(
@@ -114,6 +119,11 @@ class _AvatarState extends State<Avatar> {
                     Provider.of<Data>(context, listen: false).changeIndicator();
                     final pickedFile = await _picker.pickImage(
                         source: ImageSource.gallery, imageQuality: 30);
+                    print(pickedFile);
+                    if (pickedFile == null) {
+                      Provider.of<Data>(context, listen: false)
+                          .changeIndicator();
+                    }
 
                     var snapshot = await storage
                         .ref()

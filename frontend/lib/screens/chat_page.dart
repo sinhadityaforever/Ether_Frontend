@@ -464,13 +464,19 @@ class _ChatPageState extends State<ChatPage> {
                                   // ignore: deprecated_member_use
                                   FlatButton.icon(
                                     onPressed: () async {
+                                      Provider.of<Data>(context, listen: false)
+                                          .changeIndicator();
                                       final pickedFile =
                                           await _picker.pickImage(
                                         source: ImageSource.camera,
                                         imageQuality: 30,
                                       );
-                                      Provider.of<Data>(context, listen: false)
-                                          .changeIndicator();
+                                      if (pickedFile == null) {
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .changeIndicator();
+                                      }
+
                                       var snapshot = await storage
                                           .ref()
                                           .child(
@@ -494,13 +500,19 @@ class _ChatPageState extends State<ChatPage> {
                                   // ignore: deprecated_member_use
                                   FlatButton.icon(
                                     onPressed: () async {
+                                      Provider.of<Data>(context, listen: false)
+                                          .changeIndicator();
                                       final pickedFile =
                                           await _picker.pickImage(
                                         source: ImageSource.gallery,
                                         imageQuality: 30,
                                       );
-                                      Provider.of<Data>(context, listen: false)
-                                          .changeIndicator();
+                                      if (pickedFile == null) {
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .changeIndicator();
+                                      }
+
                                       var snapshot = await storage
                                           .ref()
                                           .child(

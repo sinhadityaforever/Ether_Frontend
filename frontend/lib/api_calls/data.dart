@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
-import 'package:frontend/models/option.dart';
 import 'package:frontend/models/screening.dart';
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
@@ -23,6 +22,7 @@ class Data extends ChangeNotifier {
   var signupEmail;
   var otp;
   bool showIndicator = false;
+  bool showIndicator1 = false;
   String secretPwd = 'OtherSignIn';
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final googleSignIn = GoogleSignIn(scopes: ['email']);
@@ -494,6 +494,8 @@ class Data extends ChangeNotifier {
     print('completed');
   }
 
+  List<Map<String, dynamic>> lastRoomMessages = [];
+
   List<Map<String, dynamic>> roomMessages = [];
   void setRoomMessage(roomId, message, senderId, isAdmin, isPhoto, imageUrl,
       senderName, uuid, isReply, repliedTo) {
@@ -509,6 +511,9 @@ class Data extends ChangeNotifier {
       'isReply': isReply,
       'repliedTo': repliedTo
     });
+    lastRoomMessages.add(isPhoto
+        ? {'roomId': roomId, 'message': 'Photo', 'senderId': senderId}
+        : {'roomId': roomId, 'message': message, 'senderId': senderId});
     notifyListeners();
   }
 
@@ -961,6 +966,19 @@ class Data extends ChangeNotifier {
     }
   }
 
+  String getlastRoomMessage(roomId) {
+    if (lastRoomMessages.length > 0) {
+      var lastRoomMessageMap = lastRoomMessages
+          .lastWhere((element) => (element['roomId'] == roomId), orElse: () {
+        return {'message': 'No messages'};
+      });
+
+      return ("${lastRoomMessageMap['message']}");
+    } else {
+      return 'No messages';
+    }
+  }
+
   void signOutGoogle() async {
     if (uid.length > 0) {
       await googleSignIn.signOut();
@@ -1020,6 +1038,11 @@ class Data extends ChangeNotifier {
 
   void changeIndicator() {
     showIndicator = !showIndicator;
+    notifyListeners();
+  }
+
+  void changeIndicator1() {
+    showIndicator1 = !showIndicator1;
     notifyListeners();
   }
 
@@ -1135,7 +1158,7 @@ class Data extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getFeedCards() async {
+  Future<String> getFeedCards() async {
     try {
       http.Response response = await http.get(
         Uri.parse('http://$ip:5000/card/$idOfUser'),
@@ -1162,34 +1185,7 @@ class Data extends ChangeNotifier {
       print(e);
     }
     notifyListeners();
-  }
-
-  List<Optionsfero> options = [];
-  Future<void> getOptions(int questionId) async {
-    try {
-      http.Response response = await http.get(
-        Uri.parse('http://$ip:5000/card/options/$questionId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer ${tokenOfUser}',
-        },
-      );
-
-      options.clear();
-      for (var i = 0; i < jsonDecode(response.body).length; i++) {
-        options.add(
-          Optionsfero(
-            questionId: questionId,
-            option: jsonDecode(response.body)[i]['option'],
-            isAnswer: jsonDecode(response.body)[i]['is_answer'],
-          ),
-        );
-      }
-    } catch (e) {
-      print(e);
-    }
-    notifyListeners();
+    return 'sdsdsdsd';
   }
 
   Future<void> deleteMessage(String uuid, int recieverId) async {
