@@ -16,7 +16,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.104';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -83,9 +83,10 @@ class Data extends ChangeNotifier {
         await getInterest();
         await getSelfInterest();
         await scheduleMatches();
-        await getRooms();
+
         await getMessage();
         await getContacts();
+        await getRooms();
 
         Navigator.of(context).pushNamedAndRemoveUntil(
             '/contactsPage', (Route<dynamic> route) => false);
@@ -132,6 +133,11 @@ class Data extends ChangeNotifier {
       print(e);
       return (400);
     }
+  }
+
+  String listFinder(String uuid) {
+    var rplMsg = roomMessages.singleWhere((element) => element['uuid'] == uuid);
+    return rplMsg['message'];
   }
 
   Future<void> readUser() async {
@@ -511,6 +517,7 @@ class Data extends ChangeNotifier {
       'isReply': isReply,
       'repliedTo': repliedTo
     });
+    print(roomMessages.toString() + 'testo1');
     lastRoomMessages.add(isPhoto
         ? {'roomId': roomId, 'message': 'Photo', 'senderId': senderId}
         : {'roomId': roomId, 'message': message, 'senderId': senderId});
@@ -526,6 +533,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
+
     for (var i = 0; i < jsonDecode(response.body).length; i++) {
       String msgText = jsonDecode(response.body)[i]['content'].toString();
       int recieverId = jsonDecode(response.body)[i]['reciever_id'];
@@ -534,6 +542,7 @@ class Data extends ChangeNotifier {
       bool isPhoto = jsonDecode(response.body)[i]['isPhoto'];
       String imageUrl = jsonDecode(response.body)[i]['imageUrl'];
       String uuid = jsonDecode(response.body)[i]['uuid'];
+
       bool isReply = jsonDecode(response.body)[i]['isReply'];
       String repliedTo = jsonDecode(response.body)[i]['repliedTo'];
       setMessage(recieverId, msgText, senderId, isAdmin, isPhoto, imageUrl,
@@ -543,13 +552,14 @@ class Data extends ChangeNotifier {
 
   Future<void> getRoomMessage(int roomId) async {
     http.Response response = await http.get(
-      Uri.parse('https://chat.etherapp.social/room/message/$roomId'),
+      Uri.parse('http://$ip:5000/room/message/$roomId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
+    print(jsonDecode(response.body).toString() + '123456');
     for (var i = 0; i < jsonDecode(response.body).length; i++) {
       String msgText = jsonDecode(response.body)[i]['content'].toString();
       int roomId = jsonDecode(response.body)[i]['room_id'];
@@ -559,7 +569,7 @@ class Data extends ChangeNotifier {
       String imageUrl = jsonDecode(response.body)[i]['photo_url'];
       String senderName = jsonDecode(response.body)[i]['username'];
       String uuid = jsonDecode(response.body)[i]['uuid'];
-      String isReply = jsonDecode(response.body)[i]['is_reply'];
+      bool isReply = jsonDecode(response.body)[i]['is_reply'];
       String repliedTo = jsonDecode(response.body)[i]['replied_to'];
 
       setRoomMessage(roomId, msgText, senderId, isAdmin, isPhoto, imageUrl,
@@ -1142,7 +1152,6 @@ class Data extends ChangeNotifier {
       );
       chatRooms.clear();
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
-        print(jsonDecode(response.body)[i]['room_id'].toString() + "fuck ya");
         chatRooms.add(
           ChatRoomModel(
             imageUrl: jsonDecode(response.body)[i]['room_avatar_url'],

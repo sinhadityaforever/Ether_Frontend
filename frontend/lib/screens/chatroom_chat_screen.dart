@@ -50,12 +50,6 @@ class _RoomChatPageState extends State<RoomChatPage> {
     super.initState();
   }
 
-  void replyMessage(message) {
-    setState(() {
-      Provider.of<Data>(context, listen: false).repliedroomMessage = message;
-    });
-  }
-
   void cancelReplyMessage(message) {
     setState(() {
       Provider.of<Data>(context, listen: false).repliedroomMessage = {};
@@ -114,13 +108,17 @@ class _RoomChatPageState extends State<RoomChatPage> {
               controller: _controller1,
               itemBuilder: (context, index) {
                 final message = Provider.of<Data>(context).roomMessages[index];
-
+                print(message.toString() + 'fero');
                 if (message['roomId'] == args.roomId) {
                   return SwipeTo(
                     onRightSwipe: () {
                       setState(() {
                         isReplying = true;
-                        replyMessage(message);
+                        print(message);
+                        Provider.of<Data>(context, listen: false)
+                            .repliedroomMessage = message;
+                        print(Provider.of<Data>(context, listen: false)
+                            .repliedroomMessage);
                         focusNode.requestFocus();
                       });
                     },

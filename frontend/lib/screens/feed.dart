@@ -59,6 +59,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                             ),
                           ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -71,6 +72,9 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   color: Color(0xFFEB1555),
                                 ),
                               ),
+                            ),
+                            SizedBox(
+                              height: 20.h,
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),

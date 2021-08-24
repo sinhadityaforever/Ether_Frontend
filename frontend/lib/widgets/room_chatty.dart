@@ -79,6 +79,10 @@ class roomChatty extends StatelessWidget {
         ),
       );
     } else {
+      print(Provider.of<Data>(context, listen: false)
+          .roomMessages
+          .singleWhere((elementq) => elementq['uuid'] == replyTo)
+          .toString());
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -107,12 +111,9 @@ class roomChatty extends StatelessWidget {
                       topRight: Radius.circular(10.0.r),
                     ),
                   ),
-                  child: Text(
-                    Provider.of<Data>(context, listen: false)
-                        .roomMessages
-                        .singleWhere((elementq) =>
-                            elementq['uuid'] == replyTo)['message'],
-                  ),
+                  child: Text(Provider.of<Data>(context, listen: false)
+                      .listFinder(Provider.of<Data>(context, listen: false)
+                          .repliedroomMessage['uuid'])),
                 ),
               ),
             Material(
