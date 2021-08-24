@@ -4,10 +4,11 @@ import 'package:frontend/api_calls/data.dart';
 import 'package:provider/provider.dart';
 
 class RoundedButton extends StatefulWidget {
-  RoundedButton(
-      {required this.colorOfButton,
-      required this.onPressedRoundButton,
-      required this.textOfButton});
+  RoundedButton({
+    required this.colorOfButton,
+    required this.onPressedRoundButton,
+    required this.textOfButton,
+  });
 
   final Color colorOfButton;
   final String textOfButton;
