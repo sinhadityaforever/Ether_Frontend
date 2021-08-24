@@ -11,6 +11,7 @@ import 'package:frontend/widgets/rounded_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatRoomPageArguments {
   final String roomAvatarUrl;
@@ -95,17 +96,17 @@ class _RoomChatPageState extends State<RoomChatPage> {
               itemBuilder: (context, index) {
                 final message = Provider.of<Data>(context).roomMessages[index];
 
-                if (message.roomId == args.roomId) {
+                if (message['roomId'] == args.roomId) {
                   return RoomChatBubble(
-                    texto: message.message,
-                    isMe:
-                        message.senderId == Provider.of<Data>(context).idOfUser
-                            ? true
-                            : false,
-                    isAdmin: message.isAdmin,
-                    isPhoto: message.isPhoto,
-                    imageUrl: message.imageUrl,
-                    senderName: message.senderName,
+                    texto: message['message'],
+                    isMe: message['senderId'] ==
+                            Provider.of<Data>(context).idOfUser
+                        ? true
+                        : false,
+                    isAdmin: message['isAdmin'],
+                    isPhoto: message['isPhoto'],
+                    imageUrl: message['imageUrl'],
+                    senderName: message['senderName'],
                     // showProfileCallback: Navigator.pushNamed(
                     //   context,
                     //   '//roomProfileView',
@@ -165,20 +166,23 @@ class _RoomChatPageState extends State<RoomChatPage> {
                           color: Color(0xFFEB1555),
                           icon: Icon(Icons.send),
                           onPressed: () {
+                            String uuid = Uuid().v4();
                             setState(() {
                               print(args.roomId.toString() + "bitch");
                               Provider.of<Data>(context, listen: false)
                                   .setRoomMessage(
-                                args.roomId,
-                                messageInField,
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser,
-                                false,
-                                false,
-                                'no image',
-                                Provider.of<Data>(context, listen: false)
-                                    .nameOfUser,
-                              );
+                                      args.roomId,
+                                      messageInField,
+                                      Provider.of<Data>(context, listen: false)
+                                          .idOfUser,
+                                      false,
+                                      false,
+                                      'no image',
+                                      Provider.of<Data>(context, listen: false)
+                                          .nameOfUser,
+                                      uuid,
+                                      false,
+                                      'no_reply');
                               _controller1.animateTo(
                                 _controller1.position.maxScrollExtent + 100.h,
                                 duration: Duration(milliseconds: 300),
@@ -187,15 +191,17 @@ class _RoomChatPageState extends State<RoomChatPage> {
 
                               Provider.of<Data>(context, listen: false)
                                   .sendRoomMessage(
-                                messageInField,
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser,
-                                args.roomId,
-                                false,
-                                'no image',
-                                Provider.of<Data>(context, listen: false)
-                                    .nameOfUser,
-                              );
+                                      messageInField,
+                                      Provider.of<Data>(context, listen: false)
+                                          .idOfUser,
+                                      args.roomId,
+                                      false,
+                                      'no image',
+                                      Provider.of<Data>(context, listen: false)
+                                          .nameOfUser,
+                                      uuid,
+                                      false,
+                                      'no_reply');
                               _controller.clear();
                             });
                           },
@@ -311,22 +317,27 @@ class _RoomChatPageState extends State<RoomChatPage> {
                               RoundedButton(
                                 colorOfButton: Color(0xFFEB1555),
                                 onPressedRoundButton: () async {
+                                  String uuidImage = Uuid().v4();
                                   if (imageUrlChanged == 'no image') {
                                     Provider.of<Data>(context, listen: false)
                                         .showIndicator = false;
                                   } else {
                                     Provider.of<Data>(context, listen: false)
                                         .setRoomMessage(
-                                      args.roomId,
-                                      'image',
-                                      Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      false,
-                                      true,
-                                      imageUrlChanged,
-                                      Provider.of<Data>(context, listen: false)
-                                          .nameOfUser,
-                                    );
+                                            args.roomId,
+                                            'image',
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .idOfUser,
+                                            false,
+                                            true,
+                                            imageUrlChanged,
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .nameOfUser,
+                                            uuidImage,
+                                            false,
+                                            'no_reply');
                                     print(imageUrlChanged + '7');
                                     _controller1.animateTo(
                                       _controller1.position.maxScrollExtent +
@@ -338,15 +349,19 @@ class _RoomChatPageState extends State<RoomChatPage> {
 
                                     Provider.of<Data>(context, listen: false)
                                         .sendRoomMessage(
-                                      'image',
-                                      Provider.of<Data>(context, listen: false)
-                                          .idOfUser,
-                                      args.roomId,
-                                      true,
-                                      imageUrlChanged,
-                                      Provider.of<Data>(context, listen: false)
-                                          .nameOfUser,
-                                    );
+                                            'image',
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .idOfUser,
+                                            args.roomId,
+                                            true,
+                                            imageUrlChanged,
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .nameOfUser,
+                                            uuidImage,
+                                            false,
+                                            'no_reply');
                                   }
                                   Navigator.pop(context);
                                 },
