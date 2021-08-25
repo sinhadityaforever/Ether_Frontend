@@ -60,10 +60,13 @@ class InterestsPage extends StatelessWidget {
           RoundedButton(
             colorOfButton: Color(0xFFEB1555),
             onPressedRoundButton: () async {
-              Provider.of<Data>(context, listen: false)
+              Provider.of<Data>(context, listen: false).changeIndicator();
+              await Provider.of<Data>(context, listen: false)
                   .updateToggle(interestText);
-              Provider.of<Data>(context, listen: false).scheduleMatches();
-              Provider.of<Data>(context, listen: false).interestSave(context);
+              await Provider.of<Data>(context, listen: false).scheduleMatches();
+              await Provider.of<Data>(context, listen: false)
+                  .interestSave(context);
+              Provider.of<Data>(context, listen: false).changeIndicator();
             },
             textOfButton: 'Next',
           )

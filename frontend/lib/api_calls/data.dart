@@ -16,7 +16,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.104';
+  String ip = '192.168.0.194';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -856,13 +856,14 @@ class Data extends ChangeNotifier {
         body: jsonEncode(<String, String>{'self_id': idOfUser.toString()}));
   }
 
-  void interestSave(context) async {
+  Future<void> interestSave(context) async {
     await getOccupation();
     await getInterest();
     await getSelf();
     await getSelfInterest();
     await scheduleMatches();
     await getMessage();
+    await getRooms();
     Navigator.of(context).pushNamedAndRemoveUntil(
         '/contactsPage', (Route<dynamic> route) => false);
     notifyListeners();

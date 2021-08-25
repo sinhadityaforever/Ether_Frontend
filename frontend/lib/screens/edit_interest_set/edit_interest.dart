@@ -67,13 +67,17 @@ class EditInterestAfterOccupation extends StatelessWidget {
             RoundedButton(
               colorOfButton: Color(0xFFEB1555),
               onPressedRoundButton: () async {
+                Provider.of<Data>(context, listen: false).changeIndicator();
                 await Provider.of<Data>(context, listen: false).updateToggle(
                     Provider.of<Data>(context, listen: false)
                         .generatedInterestsText);
+
+                await Provider.of<Data>(context, listen: false)
+                    .interestSave(context);
+                Provider.of<Data>(context, listen: false).changeIndicator();
                 Provider.of<Data>(context, listen: false)
                     .generatedInterests
                     .clear();
-                Provider.of<Data>(context, listen: false).interestSave(context);
               },
               textOfButton: 'Save',
             )
