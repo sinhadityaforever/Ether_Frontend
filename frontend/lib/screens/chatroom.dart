@@ -3,7 +3,7 @@ import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/widgets/chat_list_tile.dart';
 import 'package:provider/provider.dart';
 
-import 'chatroom_chat_screen.dart';
+import 'chatroompage.dart';
 
 class ChatRoomContactPage extends StatefulWidget {
   @override
@@ -36,10 +36,10 @@ class _ChatRoomContactPageState extends State<ChatRoomContactPage> {
 
               Navigator.pushNamed(
                 context,
-                '/chatRoomChatScreen',
+                '/chatRoomChatPage',
                 arguments: ChatRoomPageArguments(
                   roomAvatarUrl: chatRoom.imageUrl,
-                  roomName: chatRoom.name,
+                  chatRoomName: chatRoom.name,
                   roomId: chatRoom.roomId,
                 ),
               );

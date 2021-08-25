@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:frontend/screens/chatroom_chat_screen.dart';
+import 'package:frontend/screens/chatroompage.dart';
 import 'package:frontend/screens/edit_interest_set/edit_interest.dart';
 import 'package:frontend/screens/edit_interest_set/edit_occupation.dart';
 import 'package:frontend/screens/entry_screen.dart';
@@ -155,9 +155,9 @@ class _MyAppState extends State<MyApp> {
                   '/entryScreen': (context) => EntryScreen(),
                   '/editOccupation': (context) => OccupationEdit(),
                   '/editInterest': (context) => EditInterestAfterOccupation(),
-                  '/chatRoomChatScreen': (context) => RoomChatPage(),
                   '/selfProfileView': (context) => SelfProfileView(),
-                  '/roomProfileView': (context) => RoomProfileView()
+                  '/roomProfileView': (context) => RoomProfileView(),
+                  '/chatRoomChatPage': (context) => ChatRoomPage(),
                 },
               ),
             );

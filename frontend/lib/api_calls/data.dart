@@ -16,7 +16,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.104';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -83,9 +83,10 @@ class Data extends ChangeNotifier {
         await getInterest();
         await getSelfInterest();
         await scheduleMatches();
-        await getRooms();
+
         await getMessage();
         await getContacts();
+        await getRooms();
 
         Navigator.of(context).pushNamedAndRemoveUntil(
             '/contactsPage', (Route<dynamic> route) => false);
@@ -132,6 +133,12 @@ class Data extends ChangeNotifier {
       print(e);
       return (400);
     }
+  }
+
+  String listFinder(String uuid, List messages) {
+    var rplMsg = messages.singleWhere((element) => element['uuid'] == uuid,
+        orElse: () => {'message': 'There is no evidence of this message'});
+    return rplMsg['message'];
   }
 
   Future<void> readUser() async {
@@ -431,7 +438,7 @@ class Data extends ChangeNotifier {
   Future<void> addScreen(List<String> screenList) async {
     try {
       await http.post(
-        Uri.parse('https://chat.etherapp.social/occupation/${idOfUser}'),
+        Uri.parse('http://$ip:5000/occupation/${idOfUser}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -442,6 +449,7 @@ class Data extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+    await getOccupation();
   }
 
   Future<void> getInterest() async {
@@ -511,6 +519,7 @@ class Data extends ChangeNotifier {
       'isReply': isReply,
       'repliedTo': repliedTo
     });
+    print(roomMessages.toString() + 'testo1');
     lastRoomMessages.add(isPhoto
         ? {'roomId': roomId, 'message': 'Photo', 'senderId': senderId}
         : {'roomId': roomId, 'message': message, 'senderId': senderId});
@@ -526,6 +535,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
+
     for (var i = 0; i < jsonDecode(response.body).length; i++) {
       String msgText = jsonDecode(response.body)[i]['content'].toString();
       int recieverId = jsonDecode(response.body)[i]['reciever_id'];
@@ -534,6 +544,7 @@ class Data extends ChangeNotifier {
       bool isPhoto = jsonDecode(response.body)[i]['isPhoto'];
       String imageUrl = jsonDecode(response.body)[i]['imageUrl'];
       String uuid = jsonDecode(response.body)[i]['uuid'];
+
       bool isReply = jsonDecode(response.body)[i]['isReply'];
       String repliedTo = jsonDecode(response.body)[i]['repliedTo'];
       setMessage(recieverId, msgText, senderId, isAdmin, isPhoto, imageUrl,
@@ -543,13 +554,14 @@ class Data extends ChangeNotifier {
 
   Future<void> getRoomMessage(int roomId) async {
     http.Response response = await http.get(
-      Uri.parse('https://chat.etherapp.social/room/message/$roomId'),
+      Uri.parse('http://$ip:5000/room/message/$roomId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
+
     for (var i = 0; i < jsonDecode(response.body).length; i++) {
       String msgText = jsonDecode(response.body)[i]['content'].toString();
       int roomId = jsonDecode(response.body)[i]['room_id'];
@@ -559,7 +571,7 @@ class Data extends ChangeNotifier {
       String imageUrl = jsonDecode(response.body)[i]['photo_url'];
       String senderName = jsonDecode(response.body)[i]['username'];
       String uuid = jsonDecode(response.body)[i]['uuid'];
-      String isReply = jsonDecode(response.body)[i]['is_reply'];
+      bool isReply = jsonDecode(response.body)[i]['is_reply'];
       String repliedTo = jsonDecode(response.body)[i]['replied_to'];
 
       setRoomMessage(roomId, msgText, senderId, isAdmin, isPhoto, imageUrl,
@@ -631,8 +643,6 @@ class Data extends ChangeNotifier {
     bool isReply,
     String repliedTo,
   ) {
-    print(roomId.toString() +
-        "fdfdfdfdfdfedfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd");
     socket.emit("room_message", {
       "message": message,
       "sender_id": senderId,
@@ -644,13 +654,10 @@ class Data extends ChangeNotifier {
       'isReply': isReply,
       'repliedTo': repliedTo
     });
-    print('working fine0123 sendRoomMessage');
   }
 
   void sendMessage(String message, int senderId, int recieverId, bool isPhoto,
       String imageUrl, String uuid, bool isReply, String repliedTo) {
-    // String uuid = Uuid().v4();
-    print('working fine sendMessage');
     socket.emit("message", {
       "message": message,
       "sender_id": senderId,
@@ -719,7 +726,7 @@ class Data extends ChangeNotifier {
 
   Future<void> makeMatch() async {
     http.Response response = await http.post(
-      Uri.parse('https://chat.etherapp.social/matches/${idOfUser}'),
+      Uri.parse('http://$ip:5000/matches/${idOfUser}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -817,7 +824,7 @@ class Data extends ChangeNotifier {
 
   Future<void> scheduleMatches() async {
     http.Response response = await http.get(
-      Uri.parse('https://chat.etherapp.social/users/nextmatch/$idOfUser'),
+      Uri.parse('http://$ip:5000/users/nextmatch/$idOfUser'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -904,7 +911,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
-    print(jsonDecode(response.body));
+
     contactInterest.clear();
     contactInterest = jsonDecode(response.body)['result'];
     contactInterestString.clear();
@@ -912,11 +919,10 @@ class Data extends ChangeNotifier {
       contactInterestString.add(contactInterest[i]['interests']);
     }
     contactInterestInterpolated = '';
-    print(contactInterestString);
+
     for (var i = 0; i < contactInterestString.length; i++) {
       contactInterestInterpolated += (contactInterestString[i] + ', ');
     }
-    print(contactInterestInterpolated);
   }
 
   Future<void> getSelfInterest() async {
@@ -928,7 +934,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
-    print(jsonDecode(response.body));
+
     selfInterest.clear();
     selfInterest = jsonDecode(response.body)['result'];
     selfInterestString.clear();
@@ -936,11 +942,10 @@ class Data extends ChangeNotifier {
       selfInterestString.add(selfInterest[i]['interests']);
     }
     selfInterestInterpolated = '';
-    print(selfInterestString);
+
     for (var i = 0; i < selfInterestString.length; i++) {
       selfInterestInterpolated += (selfInterestString[i] + ', ');
     }
-    print(selfInterestInterpolated);
   }
 
   Future<void> getOTP(email) async {
@@ -1142,7 +1147,6 @@ class Data extends ChangeNotifier {
       );
       chatRooms.clear();
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
-        print(jsonDecode(response.body)[i]['room_id'].toString() + "fuck ya");
         chatRooms.add(
           ChatRoomModel(
             imageUrl: jsonDecode(response.body)[i]['room_avatar_url'],
@@ -1169,6 +1173,7 @@ class Data extends ChangeNotifier {
         },
       );
       feedCards.clear();
+      print(jsonDecode(response.body).toString() + 'apple');
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         feedCards.add(
           FeedCard(
@@ -1224,11 +1229,5 @@ class Data extends ChangeNotifier {
     socket.emit('delete_room_message', {"uuid": uuid, "roomId": roomId});
     print('sent emit request');
     notifyListeners();
-  }
-
-  String replyFinder(uuid) {
-    Map<String, dynamic> replyMessage =
-        roomMessages.singleWhere((element) => element['uuid'] == uuid);
-    return replyMessage['message'];
   }
 }

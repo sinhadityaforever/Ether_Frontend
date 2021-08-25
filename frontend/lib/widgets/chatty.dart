@@ -105,10 +105,10 @@ class chatty extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    Provider.of<Data>(context, listen: false)
-                        .messages
-                        .singleWhere(
-                            (element) => element['uuid'] == replyTo)['message'],
+                    Provider.of<Data>(context, listen: false).listFinder(
+                      replyTo,
+                      Provider.of<Data>(context, listen: false).messages,
+                    ),
                   ),
                 ),
               ),
