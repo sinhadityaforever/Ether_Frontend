@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -99,8 +100,24 @@ class _QuestionFeedState extends State<QuestionFeed> {
                   );
                 });
           } else {
-            return CircularProgressIndicator(
-              color: Color(0xFFEB1555),
+            return Center(
+              child: Container(
+                height: 180.h,
+                width: 180.w,
+                child: LiquidCircularProgressIndicator(
+                  value: 0.5, // Defaults to 0.5.
+                  valueColor: AlwaysStoppedAnimation(
+                    Colors.pink,
+                  ), // Defaults to the current Theme's accentColor.
+                  backgroundColor: Colors
+                      .black, // Defaults to the current Theme's backgroundColor.
+                  borderColor: Colors.red,
+                  borderWidth: 5.0,
+                  direction: Axis
+                      .horizontal, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
+                  center: Text("Loading..."),
+                ),
+              ),
             );
           }
         });
