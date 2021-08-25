@@ -54,8 +54,8 @@ class _ChatState extends State<ChatListTile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.name.length > 15
-                            ? widget.name.substring(0, 15)
+                        widget.name.length > 17
+                            ? widget.name.substring(0, 17)
                             : widget.name,
                         style: TextStyle(
                           fontSize: 17.sp,
