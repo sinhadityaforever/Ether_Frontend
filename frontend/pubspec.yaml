@@ -48,7 +48,7 @@ dependencies:
   firebase_analytics: ^8.2.0
   tiktoklikescroller: ^0.1.8
   uuid: ^3.0.4
-
+  youtube_player_flutter: ^8.0.0
   swipe_to: 0.0.1+8
 
 dev_dependencies:
