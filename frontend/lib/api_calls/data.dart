@@ -16,7 +16,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.104';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -1180,9 +1180,10 @@ class Data extends ChangeNotifier {
           FeedCard(
             id: jsonDecode(response.body)[i]['id'],
             heading: jsonDecode(response.body)[i]['heading'],
-            isQuestion: jsonDecode(response.body)[i]['is_question'],
+            isVideo: jsonDecode(response.body)[i]['is_video'],
             imageUrl: jsonDecode(response.body)[i]['image_url'],
             content: jsonDecode(response.body)[i]['content'],
+            desco: jsonDecode(response.body)[i]['desco'],
           ),
         );
       }
