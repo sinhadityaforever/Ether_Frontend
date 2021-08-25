@@ -315,11 +315,9 @@ class Data extends ChangeNotifier {
             textOfButton: 'Building an audience',
           ),
           InterestModel(
-            textOfButton: 'Doing market rescearch',
+            textOfButton: 'Doing market research',
           ),
-          InterestModel(
-            textOfButton: 'Doing ',
-          ),
+         
         ]),
     ScreeningModel(
         textOfButton: 'Learning to invest money',
