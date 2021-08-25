@@ -32,42 +32,35 @@ List<SliderModel> getSlides() {
   List<SliderModel> slides = [];
   SliderModel sliderModel0 = SliderModel(
     title: "ETHER.",
-    desc: "Simple . Reliable . Secure",
+    desc: "Learn . Network . Grow",
     imagePath: 'images/logo.png',
     credits: '',
   );
   slides.add(sliderModel0);
   SliderModel sliderModel1 = SliderModel(
-    title: "Connections",
+    title: "Scrolling Made Healthy",
     desc:
-        "Connecting people from around the world, having similar things to talk about.",
-    imagePath: 'images/1.png',
+        "We have curated some of the best content on the internet for you to scroll and expand your brain",
+    imagePath: 'images/69.png',
     credits: 'Designed by Freepik',
   );
   slides.add(sliderModel1);
   SliderModel sliderModel2 = SliderModel(
-    title: "New Friend",
+    title: "Networking Made Automatic",
     desc:
-        "A new friend gets automatically added to your Ether contacts every third day.",
+        "A new like-minded person gets automatically added to your Ether contacts every day, making networking automatic",
     imagePath: 'images/2.png',
     credits: 'Designed by Freepik',
   );
   slides.add(sliderModel2);
   SliderModel sliderModel3 = SliderModel(
-    title: "Get Comfy",
+    title: "Welcome To The Community",
     desc:
-        "Get comfortable on chat, and organize meets if you find worth it. Your next best connection is just a link away ",
-    imagePath: 'images/3.png',
+        "You get added to Communities of like minded people to brainstorm with.",
+    imagePath: 'images/doggy.png',
     credits: 'Designed by Freepik',
   );
   slides.add(sliderModel3);
-  SliderModel sliderModel4 = SliderModel(
-    title: "Secure",
-    desc:
-        "You are securely connected over our app. The contacts don't have any access to your personal details. And messages are end to end encrypted",
-    imagePath: 'images/4.png',
-    credits: 'Designed by Freepik',
-  );
-  slides.add(sliderModel4);
+
   return slides;
 }
