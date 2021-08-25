@@ -16,7 +16,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
-  String ip = '192.168.0.194';
   String uid = '';
   late final User googleUser;
   var signupEmail;
@@ -280,7 +279,8 @@ class Data extends ChangeNotifier {
 
   Future<void> increasekarma() async {
     try {
-      await http.patch(Uri.parse('http://$ip:5000/karma/iKarma/${idOfUser}'),
+      await http.patch(
+          Uri.parse('https://chat.etherapp.social/karma/iKarma/${idOfUser}'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -316,6 +316,9 @@ class Data extends ChangeNotifier {
           ),
           InterestModel(
             textOfButton: 'Doing market rescearch',
+          ),
+          InterestModel(
+            textOfButton: 'Doing ',
           ),
         ]),
     ScreeningModel(
@@ -438,7 +441,7 @@ class Data extends ChangeNotifier {
   Future<void> addScreen(List<String> screenList) async {
     try {
       await http.post(
-        Uri.parse('http://$ip:5000/occupation/${idOfUser}'),
+        Uri.parse('https://chat.etherapp.social/occupation/${idOfUser}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -528,7 +531,7 @@ class Data extends ChangeNotifier {
 
   Future<void> getMessage() async {
     http.Response response = await http.get(
-      Uri.parse('http://$ip:5000/msg/${idOfUser}'),
+      Uri.parse('https://chat.etherapp.social/msg/${idOfUser}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -554,7 +557,7 @@ class Data extends ChangeNotifier {
 
   Future<void> getRoomMessage(int roomId) async {
     http.Response response = await http.get(
-      Uri.parse('http://$ip:5000/room/message/$roomId'),
+      Uri.parse('https://chat.etherapp.social/room/message/$roomId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -581,7 +584,7 @@ class Data extends ChangeNotifier {
 
   late IO.Socket socket;
   void connect() {
-    socket = IO.io("http://${ip}:3000", //Ronit
+    socket = IO.io("http://139.59.95.139:3000", //Ronit
 
         <String, dynamic>{
           "transports": ["websocket"],
@@ -726,7 +729,7 @@ class Data extends ChangeNotifier {
 
   Future<void> makeMatch() async {
     http.Response response = await http.post(
-      Uri.parse('http://$ip:5000/matches/${idOfUser}'),
+      Uri.parse('https://chat.etherapp.social/matches/${idOfUser}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -824,7 +827,7 @@ class Data extends ChangeNotifier {
 
   Future<void> scheduleMatches() async {
     http.Response response = await http.get(
-      Uri.parse('http://$ip:5000/users/nextmatch/$idOfUser'),
+      Uri.parse('https://chat.etherapp.social/users/nextmatch/$idOfUser'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -1166,7 +1169,7 @@ class Data extends ChangeNotifier {
   Future<String> getFeedCards() async {
     try {
       http.Response response = await http.get(
-        Uri.parse('http://$ip:5000/card/$idOfUser'),
+        Uri.parse('https://chat.etherapp.social/card/$idOfUser'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -1199,7 +1202,7 @@ class Data extends ChangeNotifier {
     messages.removeWhere((element) => element['uuid'] == uuid);
     try {
       await http.delete(
-        Uri.parse('http://$ip:5000/msg/$uuid'),
+        Uri.parse('https://chat.etherapp.social/msg/$uuid'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -1218,7 +1221,7 @@ class Data extends ChangeNotifier {
     roomMessages.removeWhere((element) => element['uuid'] == uuid);
     try {
       await http.delete(
-        Uri.parse('http://$ip:5000/room/$uuid'),
+        Uri.parse('https://chat.etherapp.social/room/$uuid'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
