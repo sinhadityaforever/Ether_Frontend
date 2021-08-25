@@ -16,6 +16,9 @@ class _QuestionFeedState extends State<QuestionFeed> {
         future: Provider.of<Data>(context, listen: false).getFeedCards(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            print(
+                Provider.of<Data>(context, listen: false).feedCards.toString() +
+                    'ferodfe');
             return TikTokStyleFullPageScroller(
                 contentSize: Provider.of<Data>(context).feedCards.length,
                 swipePositionThreshold: 0.2,

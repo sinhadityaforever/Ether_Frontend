@@ -7,16 +7,15 @@ import 'package:provider/provider.dart';
 
 class roomChatty extends StatelessWidget {
   const roomChatty({
+    required this.uuid,
+    required this.isReply,
+    required this.replyTo,
     required this.isMe,
     required this.texto,
     required this.isAdmin,
     required this.isPhoto,
     required this.imageUrl,
     required this.senderName,
-    required this.roomuuid,
-    required this.isReply,
-    required this.replyTo,
-    // required this.showProfileCallback,
   });
 
   final bool isMe;
@@ -24,12 +23,12 @@ class roomChatty extends StatelessWidget {
   final bool isAdmin;
   final bool isPhoto;
   final String imageUrl;
-  final String senderName;
-  final String roomuuid;
+  final String uuid;
   final bool isReply;
   final String replyTo;
-  // final showProfileCallback;
+  final String senderName;
 
+  @override
   Widget build(BuildContext context) {
     if (isPhoto) {
       return GestureDetector(
@@ -79,10 +78,6 @@ class roomChatty extends StatelessWidget {
         ),
       );
     } else {
-      print(Provider.of<Data>(context, listen: false)
-          .roomMessages
-          .singleWhere((elementq) => elementq['uuid'] == replyTo)
-          .toString());
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -111,9 +106,13 @@ class roomChatty extends StatelessWidget {
                       topRight: Radius.circular(10.0.r),
                     ),
                   ),
-                  child: Text(Provider.of<Data>(context, listen: false)
-                      .listFinder(Provider.of<Data>(context, listen: false)
-                          .repliedroomMessage['uuid'])),
+                  child: Text(
+                    Provider.of<Data>(context, listen: false).listFinder(
+                      replyTo,
+                      Provider.of<Data>(context, listen: false).roomMessages,
+                    ),
+                    maxLines: 2,
+                  ),
                 ),
               ),
             Material(
@@ -142,14 +141,30 @@ class roomChatty extends StatelessWidget {
                   vertical: 10.0,
                   horizontal: 20.0,
                 ),
-                child: Linkable(
-                  text: texto,
-                  textColor: Colors.white,
-                  linkColor: isMe ? Colors.black : Color(0xFFEB1555),
-                  style: TextStyle(
-                    fontSize: 17.0.sp,
-                    color: Colors.white,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isMe
+                          ? 'Me'
+                          : (senderName.length > 15
+                              ? senderName.substring(0, 15)
+                              : senderName),
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                    Linkable(
+                      text: texto,
+                      textColor: Colors.white,
+                      linkColor: isMe ? Colors.black : Color(0xFFEB1555),
+                      style: TextStyle(
+                        fontSize: 17.0.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

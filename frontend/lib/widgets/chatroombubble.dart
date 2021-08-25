@@ -3,29 +3,27 @@ import 'package:frontend/widgets/room_chatty.dart';
 
 // This are chat bubbles that are messages basically
 
-class RoomChatBubble extends StatelessWidget {
-  RoomChatBubble({
+class ChatRoomBubble extends StatelessWidget {
+  ChatRoomBubble({
     required this.texto,
     required this.isMe,
     required this.isAdmin,
     required this.isPhoto,
     required this.imageUrl,
-    required this.senderName,
-    required this.roomuuid,
+    required this.uuid,
     required this.isReply,
     required this.replyTo,
-    // required this.showProfileCallback,
+    required this.senderName,
   });
   final String texto;
   final bool isMe;
   final bool isAdmin;
   final bool isPhoto;
   final String imageUrl;
-  final String senderName;
-  final String roomuuid;
+  final String uuid;
   final bool isReply;
   final String replyTo;
-  // final showProfileCallback;
+  final String senderName;
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +33,10 @@ class RoomChatBubble extends StatelessWidget {
       isAdmin: isAdmin,
       isPhoto: isPhoto,
       imageUrl: imageUrl,
-      senderName: senderName,
       isReply: isReply,
       replyTo: replyTo,
-      roomuuid: roomuuid,
-      // showProfileCallback: showProfileCallback,
+      uuid: uuid,
+      senderName: senderName,
     );
   }
 }

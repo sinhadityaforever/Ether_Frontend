@@ -6,12 +6,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/widgets/chatroombubble.dart';
 import 'package:frontend/widgets/negative_popup.dart';
 import 'package:frontend/widgets/popup_screen.dart';
-import 'package:frontend/widgets/room_chat_bubble.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import '../widgets/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -19,22 +20,22 @@ import 'package:swipe_to/swipe_to.dart';
 
 class ChatRoomPageArguments {
   final String roomAvatarUrl;
-  final String roomName;
+  final String chatRoomName;
   final int roomId;
 
   ChatRoomPageArguments({
     required this.roomAvatarUrl,
-    required this.roomName,
+    required this.chatRoomName,
     required this.roomId,
   });
 }
 
-class RoomChatPage extends StatefulWidget {
+class ChatRoomPage extends StatefulWidget {
   @override
-  _RoomChatPageState createState() => _RoomChatPageState();
+  _ChatRoomPageState createState() => _ChatRoomPageState();
 }
 
-class _RoomChatPageState extends State<RoomChatPage> {
+class _ChatRoomPageState extends State<ChatRoomPage> {
   bool isReplying = false;
   final focusNode = FocusNode();
   ScrollController _controller1 = ScrollController();
@@ -43,11 +44,23 @@ class _RoomChatPageState extends State<RoomChatPage> {
   TextEditingController _controller = TextEditingController();
   @override
   void initState() {
+    Provider.of<Data>(context, listen: false).connect();
     Timer(
-        Duration(seconds: 0),
-        () => _controller1
-            .jumpTo(_controller1.position.maxScrollExtent + 10000.h));
+      Duration(seconds: 0),
+      () =>
+          _controller1.jumpTo(_controller1.position.maxScrollExtent + 10000.h),
+    );
     super.initState();
+  }
+
+  void replyMessage(message) {
+    setState(() {
+      Provider.of<Data>(context, listen: false).repliedroomMessage = message;
+      print(Provider.of<Data>(context, listen: false)
+              .repliedroomMessage
+              .toString() +
+          'test01');
+    });
   }
 
   void cancelReplyMessage(message) {
@@ -79,7 +92,29 @@ class _RoomChatPageState extends State<RoomChatPage> {
                 // ignore: deprecated_member_use
                 FlatButton(
                   onPressed: () {
-                    print('I got tapped');
+                    // Navigator.pushNamed(
+                    //   context,
+                    //   '/profileView',
+                    //   arguments: ProfileViewArgs(
+                    //     name: Provider.of<Data>(context, listen: false)
+                    //         .selectedContact
+                    //         .name,
+                    //     imageUrl: Provider.of<Data>(context, listen: false)
+                    //         .selectedContact
+                    //         .imageUrl,
+                    //     aboutValue: Provider.of<Data>(context, listen: false)
+                    //         .selectedContact
+                    //         .aboutValue,
+                    //     interestValue: Provider.of<Data>(context, listen: false)
+                    //         .contactInterestInterpolated,
+                    //     level: Provider.of<Data>(context, listen: false)
+                    //         .selectedContact
+                    //         .level,
+                    //     karmaNumber: Provider.of<Data>(context, listen: false)
+                    //         .selectedContact
+                    //         .karmaNumber,
+                    //   ),
+                    // );
                   },
                   child: Row(
                     children: [
@@ -90,7 +125,7 @@ class _RoomChatPageState extends State<RoomChatPage> {
                       SizedBox(
                         width: 15,
                       ),
-                      Text(args.roomName),
+                      Text(args.chatRoomName),
                     ],
                   ),
                 ),
@@ -108,22 +143,20 @@ class _RoomChatPageState extends State<RoomChatPage> {
               controller: _controller1,
               itemBuilder: (context, index) {
                 final message = Provider.of<Data>(context).roomMessages[index];
-                print(message.toString() + 'fero');
+
                 if (message['roomId'] == args.roomId) {
                   return SwipeTo(
                     onRightSwipe: () {
                       setState(() {
                         isReplying = true;
-                        print(message);
-                        Provider.of<Data>(context, listen: false)
-                            .repliedroomMessage = message;
-                        print(Provider.of<Data>(context, listen: false)
-                            .repliedroomMessage);
+                        replyMessage(message);
+
                         focusNode.requestFocus();
                       });
                     },
                     onLeftSwipe: () {
                       setState(() {
+                        print('fero Lord');
                         if (message['senderId'] ==
                                 Provider.of<Data>(context, listen: false)
                                     .idOfUser &&
@@ -148,7 +181,7 @@ class _RoomChatPageState extends State<RoomChatPage> {
                         }
                       });
                     },
-                    child: RoomChatBubble(
+                    child: ChatRoomBubble(
                       texto: message['message'],
                       isMe: message['senderId'] ==
                               Provider.of<Data>(context).idOfUser
@@ -157,33 +190,10 @@ class _RoomChatPageState extends State<RoomChatPage> {
                       isAdmin: message['isAdmin'],
                       isPhoto: message['isPhoto'],
                       imageUrl: message['imageUrl'],
-                      senderName: message['senderName'],
                       isReply: message['isReply'],
                       replyTo: message['repliedTo'],
-                      roomuuid: message['uuid'],
-                      // showProfileCallback: Navigator.pushNamed(
-                      //   context,
-                      //   '//roomProfileView',
-                      //   arguments: RoomProfileViewArgs(
-                      //     name: Provider.of<Data>(context, listen: false)
-                      //         .profileView[0]
-                      //         .name,
-                      //     imageUrl: Provider.of<Data>(context, listen: false)
-                      //         .profileView[0]
-                      //         .imageUrl,
-                      //     aboutValue: Provider.of<Data>(context, listen: false)
-                      //         .profileView[0]
-                      //         .aboutValue,
-                      //     interestValue: Provider.of<Data>(context, listen: false)
-                      //         .contactInterestInterpolated,
-                      //     level: Provider.of<Data>(context, listen: false)
-                      //         .profileView[0]
-                      //         .level,
-                      //     karmaNumber: Provider.of<Data>(context, listen: false)
-                      //         .profileView[0]
-                      //         .karmaNumber,
-                      //   ),
-                      // ),
+                      uuid: message['uuid'],
+                      senderName: message['senderName'],
                     ),
                   );
                 } else {
@@ -217,7 +227,7 @@ class _RoomChatPageState extends State<RoomChatPage> {
                                       );
                                     });
                                   }),
-                              RoomChatBubble(
+                              ChatRoomBubble(
                                 texto: Provider.of<Data>(context, listen: false)
                                             .repliedroomMessage['message']
                                             .length >
@@ -244,9 +254,8 @@ class _RoomChatPageState extends State<RoomChatPage> {
                                 imageUrl:
                                     Provider.of<Data>(context, listen: false)
                                         .repliedroomMessage['imageUrl'],
-                                roomuuid:
-                                    Provider.of<Data>(context, listen: false)
-                                        .repliedroomMessage['uuid'],
+                                uuid: Provider.of<Data>(context, listen: false)
+                                    .repliedroomMessage['uuid'],
                                 isReply:
                                     Provider.of<Data>(context, listen: false)
                                         .repliedroomMessage['isReply'],
@@ -264,6 +273,9 @@ class _RoomChatPageState extends State<RoomChatPage> {
                             height: 0,
                           ),
                         TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          focusNode: focusNode,
                           controller: _controller,
                           decoration: InputDecoration(
                             filled: true,
@@ -404,6 +416,7 @@ class _RoomChatPageState extends State<RoomChatPage> {
                                       );
                                     }
                                   }
+
                                   _controller.clear();
                                 });
                               },
@@ -601,10 +614,12 @@ class _RoomChatPageState extends State<RoomChatPage> {
                                                 listen: false)
                                             .nameOfUser,
                                         uuidImage,
-                                        false,
-                                        'no_reply',
+                                        true,
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .repliedroomMessage['uuid'],
                                       );
-                                      print(imageUrlChanged + '7');
+
                                       _controller1.animateTo(
                                         _controller1.position.maxScrollExtent +
                                             48.h,
@@ -634,7 +649,7 @@ class _RoomChatPageState extends State<RoomChatPage> {
                                       cancelReplyMessage(
                                         Provider.of<Data>(context,
                                                 listen: false)
-                                            .repliedMessage,
+                                            .repliedroomMessage,
                                       );
                                     }
                                   }

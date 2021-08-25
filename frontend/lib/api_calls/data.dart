@@ -135,8 +135,9 @@ class Data extends ChangeNotifier {
     }
   }
 
-  String listFinder(String uuid) {
-    var rplMsg = roomMessages.singleWhere((element) => element['uuid'] == uuid);
+  String listFinder(String uuid, List messages) {
+    var rplMsg = messages.singleWhere((element) => element['uuid'] == uuid,
+        orElse: () => {'message': 'There is no evidence of this message'});
     return rplMsg['message'];
   }
 
@@ -437,7 +438,7 @@ class Data extends ChangeNotifier {
   Future<void> addScreen(List<String> screenList) async {
     try {
       await http.post(
-        Uri.parse('https://chat.etherapp.social/occupation/${idOfUser}'),
+        Uri.parse('http://$ip:5000/occupation/${idOfUser}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -448,6 +449,7 @@ class Data extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+    await getOccupation();
   }
 
   Future<void> getInterest() async {
@@ -559,7 +561,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
-    print(jsonDecode(response.body).toString() + '123456');
+
     for (var i = 0; i < jsonDecode(response.body).length; i++) {
       String msgText = jsonDecode(response.body)[i]['content'].toString();
       int roomId = jsonDecode(response.body)[i]['room_id'];
@@ -641,8 +643,6 @@ class Data extends ChangeNotifier {
     bool isReply,
     String repliedTo,
   ) {
-    print(roomId.toString() +
-        "fdfdfdfdfdfedfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd");
     socket.emit("room_message", {
       "message": message,
       "sender_id": senderId,
@@ -654,13 +654,10 @@ class Data extends ChangeNotifier {
       'isReply': isReply,
       'repliedTo': repliedTo
     });
-    print('working fine0123 sendRoomMessage');
   }
 
   void sendMessage(String message, int senderId, int recieverId, bool isPhoto,
       String imageUrl, String uuid, bool isReply, String repliedTo) {
-    // String uuid = Uuid().v4();
-    print('working fine sendMessage');
     socket.emit("message", {
       "message": message,
       "sender_id": senderId,
@@ -729,7 +726,7 @@ class Data extends ChangeNotifier {
 
   Future<void> makeMatch() async {
     http.Response response = await http.post(
-      Uri.parse('https://chat.etherapp.social/matches/${idOfUser}'),
+      Uri.parse('http://$ip:5000/matches/${idOfUser}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -827,7 +824,7 @@ class Data extends ChangeNotifier {
 
   Future<void> scheduleMatches() async {
     http.Response response = await http.get(
-      Uri.parse('https://chat.etherapp.social/users/nextmatch/$idOfUser'),
+      Uri.parse('http://$ip:5000/users/nextmatch/$idOfUser'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -914,7 +911,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
-    print(jsonDecode(response.body));
+
     contactInterest.clear();
     contactInterest = jsonDecode(response.body)['result'];
     contactInterestString.clear();
@@ -922,11 +919,10 @@ class Data extends ChangeNotifier {
       contactInterestString.add(contactInterest[i]['interests']);
     }
     contactInterestInterpolated = '';
-    print(contactInterestString);
+
     for (var i = 0; i < contactInterestString.length; i++) {
       contactInterestInterpolated += (contactInterestString[i] + ', ');
     }
-    print(contactInterestInterpolated);
   }
 
   Future<void> getSelfInterest() async {
@@ -938,7 +934,7 @@ class Data extends ChangeNotifier {
         'Authorization': 'Bearer ${tokenOfUser}',
       },
     );
-    print(jsonDecode(response.body));
+
     selfInterest.clear();
     selfInterest = jsonDecode(response.body)['result'];
     selfInterestString.clear();
@@ -946,11 +942,10 @@ class Data extends ChangeNotifier {
       selfInterestString.add(selfInterest[i]['interests']);
     }
     selfInterestInterpolated = '';
-    print(selfInterestString);
+
     for (var i = 0; i < selfInterestString.length; i++) {
       selfInterestInterpolated += (selfInterestString[i] + ', ');
     }
-    print(selfInterestInterpolated);
   }
 
   Future<void> getOTP(email) async {
@@ -1178,6 +1173,7 @@ class Data extends ChangeNotifier {
         },
       );
       feedCards.clear();
+      print(jsonDecode(response.body).toString() + 'apple');
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         feedCards.add(
           FeedCard(
