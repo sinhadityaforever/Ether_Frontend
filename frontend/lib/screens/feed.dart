@@ -128,7 +128,18 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 topRight: Radius.circular(30.r),
                               ),
                               child: YoutubePlayer(
-                                bottomActions: [],
+                                topActions: [
+                                  PlaybackSpeedButton(
+                                    icon: Icon(Icons.speed),
+                                  ),
+                                ],
+                                bottomActions: [
+                                  ProgressBar(
+                                    isExpanded: true,
+                                  ),
+                                  CurrentPosition(),
+                                  RemainingDuration(),
+                                ],
                                 aspectRatio: 16 / 9,
                                 controller: YoutubePlayerController(
                                   initialVideoId: YoutubePlayer.convertUrlToId(
