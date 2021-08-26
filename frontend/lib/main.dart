@@ -8,6 +8,7 @@ import 'package:frontend/screens/chatroompage.dart';
 import 'package:frontend/screens/edit_interest_set/edit_interest.dart';
 import 'package:frontend/screens/edit_interest_set/edit_occupation.dart';
 import 'package:frontend/screens/entry_screen.dart';
+import 'package:frontend/screens/feedCard.dart';
 import 'package:frontend/screens/forgot_password_set/change_password.dart';
 import 'package:frontend/screens/forgot_password_set/email_confirm.dart';
 import 'package:frontend/screens/forgot_password_set/otp_password.dart';
@@ -159,6 +160,7 @@ class _MyAppState extends State<MyApp> {
                   '/roomProfileView': (context) => RoomProfileView(),
                   '/chatRoomChatPage': (context) => ChatRoomPage(),
                   '/fullScreenPlayer': (context) => FullScreenPlayer(),
+                  '/feedCard': (context) => FeedCard()
                 },
               ),
             );

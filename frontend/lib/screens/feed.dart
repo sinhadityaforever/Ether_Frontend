@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/screens/feedCard.dart';
+import 'package:frontend/widgets/rounded_button.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
@@ -114,6 +116,8 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         controlsVisibleAtStart: true,
                         autoPlay: false,
                         mute: false,
+                        startAt: Provider.of<Data>(context, listen: false)
+                            .onVideoResume,
                       ),
                     );
                     return Card(
@@ -208,6 +212,8 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                       .feedCards[index]
                                       .desco
                                       .replaceAll("20", '\n\n\u2022 '),
+                                  maxLines: 8,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 17.sp,
                                     color: Colors.white60,
@@ -215,7 +221,40 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 ),
                               ),
                             ],
-                          )
+                          ),
+                          RoundedButton(
+                              colorOfButton: Color(0xFFEB1555),
+                              onPressedRoundButton: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/feedCard',
+                                  arguments: FeedCardArguments(
+                                      content: Provider.of<Data>(context,
+                                              listen: false)
+                                          .feedCards[index]
+                                          .content,
+                                      desco: Provider.of<Data>(context,
+                                              listen: false)
+                                          .feedCards[index]
+                                          .desco,
+                                      heading: Provider.of<Data>(context,
+                                              listen: false)
+                                          .feedCards[index]
+                                          .heading,
+                                      id: Provider.of<Data>(context, listen: false)
+                                          .feedCards[index]
+                                          .id,
+                                      imageUrl:
+                                          Provider.of<Data>(context, listen: false)
+                                              .feedCards[index]
+                                              .imageUrl,
+                                      isVideo:
+                                          Provider.of<Data>(context, listen: false)
+                                              .feedCards[index]
+                                              .isVideo),
+                                );
+                              },
+                              textOfButton: 'Deep Dive')
                         ],
                       ),
                     );

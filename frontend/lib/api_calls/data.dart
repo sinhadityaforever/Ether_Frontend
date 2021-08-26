@@ -55,7 +55,7 @@ class Data extends ChangeNotifier {
   Map<String, dynamic> repliedroomMessage = {};
   String notifToken = '';
   String bioOfUser = '';
-  Map<String, dynamic> videoInfo = {};
+  int onVideoResume = 0;
   String videoId = '';
   int videoStartingPoint = 0;
   String avatarUrlOfUser =
@@ -1234,5 +1234,15 @@ class Data extends ChangeNotifier {
     socket.emit('delete_room_message', {"uuid": uuid, "roomId": roomId});
     print('sent emit request');
     notifyListeners();
+  }
+
+  Future<bool> onVideoResumeAssign(int timestamp) async {
+    onVideoResume = timestamp;
+    notifyListeners();
+    print(timestamp);
+    print(onVideoResume);
+    onVideoResume = 0;
+
+    return true;
   }
 }
