@@ -15,11 +15,11 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       initialVideoId: Provider.of<Data>(context, listen: false).videoId,
       flags: YoutubePlayerFlags(
         autoPlay: true,
-        mute: true,
+        mute: false,
         startAt: Provider.of<Data>(context, listen: false).videoStartingPoint,
       ),
     );
-    myController.toggleFullScreenMode();
+
     return YoutubePlayerBuilder(
         player: YoutubePlayer(controller: myController),
         builder: (context, player) {
