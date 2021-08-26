@@ -117,6 +117,8 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         controlsVisibleAtStart: true,
                         autoPlay: false,
                         mute: false,
+                        startAt: Provider.of<Data>(context, listen: false)
+                            .onVideoResume,
                       ),
                     );
                     return Card(
