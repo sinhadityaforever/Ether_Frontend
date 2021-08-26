@@ -592,8 +592,10 @@ class Data extends ChangeNotifier {
         });
     socket.connect();
     socket.emit("signin", idOfUser);
-    socket.emit("room_entry", roomId[0]); //new
-    socket.emit("room_entry", roomId[1]); //new
+    for (var i = 0; i < roomId.length; i++) {
+      socket.emit("room_entry", roomId[i]);
+    }
+
     socket.onConnect((data) {
       print("Connected");
       socket.on("message", (msg) {

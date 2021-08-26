@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/screening.dart';
-import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/screen_button.dart';
 import 'package:provider/provider.dart';
 import '../../api_calls/data.dart';
@@ -16,7 +15,7 @@ class OccupationEdit extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'What are you upto? choose just two',
+            'What are you upto? Tap to select long press to delete:',
             maxLines: 2,
             style: TextStyle(
               fontSize: 22.sp,
@@ -48,29 +47,16 @@ class OccupationEdit extends StatelessWidget {
                           .deleteScreen(screen);
                     },
                     onPressedInterestButton: () {
+                      Provider.of<Data>(context, listen: false)
+                          .changeColorScreen(screen);
+
                       if (Provider.of<Data>(context, listen: false)
                               .userOccupation
-                              .length >
-                          1) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => Popup(
-                            popupTitle: "Multi tasking is injurious to health",
-                            popuptext: "Just select 2 of them and peace out",
-                          ),
-                        );
-                      } else {
+                              .contains(screen.textOfButton) ==
+                          false) {
                         Provider.of<Data>(context, listen: false)
-                            .changeColorScreen(screen);
-
-                        if (Provider.of<Data>(context, listen: false)
-                                .userOccupation
-                                .contains(screen.textOfButton) ==
-                            false) {
-                          Provider.of<Data>(context, listen: false)
-                              .userOccupation
-                              .add(screen.textOfButton);
-                        }
+                            .userOccupation
+                            .add(screen.textOfButton);
                       }
                     },
                   );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/screening.dart';
-import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/screen_button.dart';
 import 'package:provider/provider.dart';
 import '../api_calls/data.dart';
@@ -16,7 +15,7 @@ class EntryScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'What are you upto? choose just two',
+            'What are you upto? Tap to select long press to delete:',
             maxLines: 2,
             style: TextStyle(
               fontSize: 22.sp,
@@ -52,35 +51,26 @@ class EntryScreen extends StatelessWidget {
                       }
                     },
                     onPressedInterestButton: () {
-                      if (choosedScreens.length > 1) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => Popup(
-                            popupTitle: "Multi tasking is injurious to health",
-                            popuptext: "Just select 2 of them and peace out",
-                          ),
-                        );
-                      } else {
-                        choosedScreens.add(screen);
-                        Provider.of<Data>(context, listen: false)
-                            .changeColorScreen(screen);
+                      choosedScreens.add(screen);
+                      Provider.of<Data>(context, listen: false)
+                          .changeColorScreen(screen);
 
-                        for (var i = 0; i < choosedScreens.length; i++) {
-                          if (choosedScreenTexts
-                                  .contains(choosedScreens[i].textOfButton) ==
-                              false) {
-                            choosedScreenTexts
-                                .add(choosedScreens[i].textOfButton);
-                          }
-                        }
-                        for (var i = 0;
-                            i < screen.screenedInterests.length;
-                            i++) {
-                          Provider.of<Data>(context, listen: false)
-                              .interests
-                              .add(screen.screenedInterests[i]);
+                      for (var i = 0; i < choosedScreens.length; i++) {
+                        if (choosedScreenTexts
+                                .contains(choosedScreens[i].textOfButton) ==
+                            false) {
+                          choosedScreenTexts
+                              .add(choosedScreens[i].textOfButton);
                         }
                       }
+                      for (var i = 0;
+                          i < screen.screenedInterests.length;
+                          i++) {
+                        Provider.of<Data>(context, listen: false)
+                            .interests
+                            .add(screen.screenedInterests[i]);
+                      }
+
                       // Provider.of<Data>(context, listen:false).interests.add(screen.screenedInterests)
                     },
                   );

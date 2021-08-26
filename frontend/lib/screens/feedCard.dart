@@ -33,6 +33,13 @@ class _FeedCardState extends State<FeedCard> {
     final args =
         ModalRoute.of(context)!.settings.arguments as FeedCardArguments;
     if (args.isVideo == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Karma up by 5 points keep going !! ',
+          ),
+        ),
+      );
       return Scaffold(
         body: Card(
           elevation: 20,
