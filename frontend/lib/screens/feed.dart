@@ -127,34 +127,42 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 topLeft: Radius.circular(30.r),
                                 topRight: Radius.circular(30.r),
                               ),
-                              child: YoutubePlayer(
-                                topActions: [
-                                  PlaybackSpeedButton(
-                                    icon: Icon(Icons.speed),
+                              child: YoutubePlayerBuilder(
+                                builder: (context, player) {
+                                  return player;
+                                },
+                                player: YoutubePlayer(
+                                  topActions: [
+                                    PlaybackSpeedButton(
+                                      icon: Icon(Icons.speed),
+                                    ),
+                                  ],
+                                  bottomActions: [
+                                    ProgressBar(
+                                      isExpanded: true,
+                                    ),
+                                    CurrentPosition(),
+                                    FullScreenButton(),
+                                    RemainingDuration(),
+                                  ],
+                                  aspectRatio: 16 / 9,
+                                  controller: YoutubePlayerController(
+                                    initialVideoId:
+                                        YoutubePlayer.convertUrlToId(
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .content)!, //Add videoID.
+                                    flags: YoutubePlayerFlags(
+                                      hideControls: false,
+                                      controlsVisibleAtStart: true,
+                                      autoPlay: false,
+                                      mute: false,
+                                    ),
                                   ),
-                                ],
-                                bottomActions: [
-                                  ProgressBar(
-                                    isExpanded: true,
-                                  ),
-                                  CurrentPosition(),
-                                  RemainingDuration(),
-                                ],
-                                aspectRatio: 16 / 9,
-                                controller: YoutubePlayerController(
-                                  initialVideoId: YoutubePlayer.convertUrlToId(
-                                      Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .content)!, //Add videoID.
-                                  flags: YoutubePlayerFlags(
-                                    hideControls: false,
-                                    controlsVisibleAtStart: true,
-                                    autoPlay: false,
-                                    mute: false,
-                                  ),
+                                  showVideoProgressIndicator: true,
+                                  progressIndicatorColor: Color(0xFFEB1555),
                                 ),
-                                showVideoProgressIndicator: true,
-                                progressIndicatorColor: Color(0xFFEB1555),
                               ),
                             ),
                           ),
