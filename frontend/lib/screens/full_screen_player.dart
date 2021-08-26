@@ -20,6 +20,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       ),
     );
 
+<<<<<<< HEAD
     return YoutubePlayerBuilder(
         player: YoutubePlayer(controller: myController),
         builder: (context, player) {
@@ -31,5 +32,41 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
             ],
           );
         });
+=======
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          YoutubePlayerBuilder(
+              player: YoutubePlayer(
+                controller: myController,
+                aspectRatio: 4 / 3,
+                topActions: [
+                  PlaybackSpeedButton(
+                    icon: Icon(Icons.speed),
+                  ),
+                ],
+                bottomActions: [
+                  ProgressBar(
+                    isExpanded: true,
+                  ),
+                  CurrentPosition(),
+                  RemainingDuration(),
+                ],
+              ),
+              builder: (context, player) {
+                return Column(
+                  children: [
+                    // some widgets
+                    player,
+                    //some other widgets
+                  ],
+                );
+              }),
+        ],
+      ),
+    );
+>>>>>>> 2049b739394a2b9383cee46e279424281d1f2143
   }
 }
