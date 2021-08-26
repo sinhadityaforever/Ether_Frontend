@@ -105,6 +105,20 @@ class _QuestionFeedState extends State<QuestionFeed> {
                       ),
                     );
                   } else {
+                    YoutubePlayerController ytController =
+                        YoutubePlayerController(
+                      initialVideoId: YoutubePlayer.convertUrlToId(
+                          Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .content)!, //Add videoID.
+
+                      flags: YoutubePlayerFlags(
+                        hideControls: false,
+                        controlsVisibleAtStart: true,
+                        autoPlay: false,
+                        mute: false,
+                      ),
+                    );
                     return Card(
                       margin: EdgeInsets.all(20.0),
                       shape: RoundedRectangleBorder(
@@ -128,9 +142,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 topRight: Radius.circular(30.r),
                               ),
                               child: YoutubePlayerBuilder(
-                                builder: (context, player) {
-                                  return player;
-                                },
                                 player: YoutubePlayer(
                                   topActions: [
                                     PlaybackSpeedButton(
@@ -138,31 +149,40 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                     ),
                                   ],
                                   bottomActions: [
+                                    IconButton(
+                                        onPressed: () {
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoId =
+                                              YoutubePlayer.convertUrlToId(
+                                                  Provider.of<Data>(context,
+                                                          listen: false)
+                                                      .feedCards[index]
+                                                      .content)!;
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoStartingPoint =
+                                              ytController
+                                                  .value.position.inSeconds;
+                                          ytController.pause();
+                                          Navigator.pushNamed(
+                                              context, '/fullScreenPlayer');
+                                        },
+                                        icon: Icon(Icons.fullscreen)),
                                     ProgressBar(
                                       isExpanded: true,
                                     ),
                                     CurrentPosition(),
-                                    FullScreenButton(),
                                     RemainingDuration(),
                                   ],
                                   aspectRatio: 16 / 9,
-                                  controller: YoutubePlayerController(
-                                    initialVideoId:
-                                        YoutubePlayer.convertUrlToId(
-                                            Provider.of<Data>(context,
-                                                    listen: false)
-                                                .feedCards[index]
-                                                .content)!, //Add videoID.
-                                    flags: YoutubePlayerFlags(
-                                      hideControls: false,
-                                      controlsVisibleAtStart: true,
-                                      autoPlay: false,
-                                      mute: false,
-                                    ),
-                                  ),
+                                  controller: ytController,
                                   showVideoProgressIndicator: true,
                                   progressIndicatorColor: Color(0xFFEB1555),
                                 ),
+                                builder: (context, player) {
+                                  return player;
+                                },
                               ),
                             ),
                           ),

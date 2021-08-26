@@ -11,6 +11,7 @@ import 'package:frontend/screens/entry_screen.dart';
 import 'package:frontend/screens/forgot_password_set/change_password.dart';
 import 'package:frontend/screens/forgot_password_set/email_confirm.dart';
 import 'package:frontend/screens/forgot_password_set/otp_password.dart';
+import 'package:frontend/screens/full_screen_player.dart';
 import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/karma_levels.dart';
 import 'package:frontend/screens/logo.dart';
@@ -157,6 +158,7 @@ class _MyAppState extends State<MyApp> {
                   '/selfProfileView': (context) => SelfProfileView(),
                   '/roomProfileView': (context) => RoomProfileView(),
                   '/chatRoomChatPage': (context) => ChatRoomPage(),
+                  '/fullScreenPlayer': (context) => FullScreenPlayer(),
                 },
               ),
             );
