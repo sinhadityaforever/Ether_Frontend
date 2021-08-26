@@ -55,6 +55,9 @@ class Data extends ChangeNotifier {
   Map<String, dynamic> repliedroomMessage = {};
   String notifToken = '';
   String bioOfUser = '';
+  Map<String, dynamic> videoInfo = {};
+  String videoId = '';
+  int videoStartingPoint = 0;
   String avatarUrlOfUser =
       'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
   String question = '';
@@ -317,7 +320,6 @@ class Data extends ChangeNotifier {
           InterestModel(
             textOfButton: 'Doing market research',
           ),
-         
         ]),
     ScreeningModel(
         textOfButton: 'Learning to invest money',
