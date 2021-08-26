@@ -198,6 +198,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   Provider.of<Data>(context, listen: false)
                                       .feedCards[index]
                                       .heading,
+                                  maxLines: 2,
                                   style: TextStyle(
                                     fontSize: 20.sp,
                                     color: Color(0xFFEB1555),
@@ -223,38 +224,43 @@ class _QuestionFeedState extends State<QuestionFeed> {
                             ],
                           ),
                           RoundedButton(
-                              colorOfButton: Color(0xFFEB1555),
-                              onPressedRoundButton: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/feedCard',
-                                  arguments: FeedCardArguments(
-                                      content: Provider.of<Data>(context,
-                                              listen: false)
+                            colorOfButton: Color(0xFFEB1555),
+                            onPressedRoundButton: () {
+                              Provider.of<Data>(context, listen: false)
+                                  .increasekarma();
+
+                              Navigator.pushNamed(
+                                context,
+                                '/feedCard',
+                                arguments: FeedCardArguments(
+                                  content:
+                                      Provider.of<Data>(context, listen: false)
                                           .feedCards[index]
                                           .content,
-                                      desco: Provider.of<Data>(context,
-                                              listen: false)
+                                  desco:
+                                      Provider.of<Data>(context, listen: false)
                                           .feedCards[index]
                                           .desco,
-                                      heading: Provider.of<Data>(context,
-                                              listen: false)
+                                  heading:
+                                      Provider.of<Data>(context, listen: false)
                                           .feedCards[index]
                                           .heading,
-                                      id: Provider.of<Data>(context, listen: false)
+                                  id: Provider.of<Data>(context, listen: false)
+                                      .feedCards[index]
+                                      .id,
+                                  imageUrl:
+                                      Provider.of<Data>(context, listen: false)
                                           .feedCards[index]
-                                          .id,
-                                      imageUrl:
-                                          Provider.of<Data>(context, listen: false)
-                                              .feedCards[index]
-                                              .imageUrl,
-                                      isVideo:
-                                          Provider.of<Data>(context, listen: false)
-                                              .feedCards[index]
-                                              .isVideo),
-                                );
-                              },
-                              textOfButton: 'Deep Dive')
+                                          .imageUrl,
+                                  isVideo:
+                                      Provider.of<Data>(context, listen: false)
+                                          .feedCards[index]
+                                          .isVideo,
+                                ),
+                              );
+                            },
+                            textOfButton: 'Deep Dive',
+                          )
                         ],
                       ),
                     );
