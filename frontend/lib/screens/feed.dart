@@ -17,17 +17,14 @@ class _QuestionFeedState extends State<QuestionFeed> {
     return FutureBuilder(
         future: Provider.of<Data>(context, listen: false).getFeedCards(),
         builder: (context, snapshot) {
-          // BBAyRBTfsOU
           if (snapshot.connectionState == ConnectionState.done) {
             print(
                 Provider.of<Data>(context, listen: false).feedCards.toString() +
                     'ferodfe');
-            return TikTokStyleFullPageScroller(
-                contentSize: Provider.of<Data>(context).feedCards.length,
-                swipePositionThreshold: 0.2,
-                swipeVelocityThreshold: 3000,
-                animationDuration: const Duration(milliseconds: 250),
-                builder: (BuildContext context, int index) {
+            return PageView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: Provider.of<Data>(context).feedCards.length,
+                itemBuilder: (BuildContext context, int index) {
                   print(Provider.of<Data>(context).feedCards.length);
                   if (Provider.of<Data>(context).feedCards[index].isVideo ==
                       false) {
@@ -152,25 +149,26 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   ],
                                   bottomActions: [
                                     IconButton(
-                                        onPressed: () {
-                                          Provider.of<Data>(context,
-                                                      listen: false)
-                                                  .videoId =
-                                              YoutubePlayer.convertUrlToId(
-                                                  Provider.of<Data>(context,
-                                                          listen: false)
-                                                      .feedCards[index]
-                                                      .content)!;
-                                          Provider.of<Data>(context,
-                                                      listen: false)
-                                                  .videoStartingPoint =
-                                              ytController
-                                                  .value.position.inSeconds;
-                                          ytController.pause();
-                                          Navigator.pushNamed(
-                                              context, '/fullScreenPlayer');
-                                        },
-                                        icon: Icon(Icons.fullscreen)),
+                                      onPressed: () {
+                                        Provider.of<Data>(context,
+                                                    listen: false)
+                                                .videoId =
+                                            YoutubePlayer.convertUrlToId(
+                                                Provider.of<Data>(context,
+                                                        listen: false)
+                                                    .feedCards[index]
+                                                    .content)!;
+                                        Provider.of<Data>(context,
+                                                    listen: false)
+                                                .videoStartingPoint =
+                                            ytController
+                                                .value.position.inSeconds;
+                                        ytController.pause();
+                                        Navigator.pushNamed(
+                                            context, '/fullScreenPlayer');
+                                      },
+                                      icon: Icon(Icons.fullscreen),
+                                    ),
                                     ProgressBar(
                                       isExpanded: true,
                                     ),
@@ -188,9 +186,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 30.h,
-                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -202,13 +197,10 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                       .feedCards[index]
                                       .heading,
                                   style: TextStyle(
-                                    fontSize: 25.sp,
+                                    fontSize: 20.sp,
                                     color: Color(0xFFEB1555),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 20.h,
                               ),
                               Padding(
                                 padding:
