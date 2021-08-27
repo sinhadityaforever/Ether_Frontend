@@ -5,7 +5,6 @@ import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktoklikescroller/tiktoklikescroller.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -25,9 +24,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                 Provider.of<Data>(context, listen: false).feedCards.toString() +
                     'ferodfe');
             return PageView.builder(
-                onPageChanged: (index) {
-                  Provider.of<Data>(context, listen: false).onVideoResume = 0;
-                },
                 scrollDirection: Axis.vertical,
                 itemCount: Provider.of<Data>(context).feedCards.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -109,13 +105,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                     );
                   } else {
                     try {
-                      print(
-                        Provider.of<Data>(context, listen: false)
-                            .firstCharacterUpper(
-                                Provider.of<Data>(context, listen: false)
-                                    .feedCards[index]
-                                    .heading),
-                      );
                       YoutubePlayerController ytController =
                           YoutubePlayerController(
                         initialVideoId: YoutubePlayer.convertUrlToId(
@@ -128,8 +117,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                           controlsVisibleAtStart: true,
                           autoPlay: false,
                           mute: false,
-                          startAt: Provider.of<Data>(context, listen: false)
-                              .onVideoResume,
                         ),
                       );
                       return Card(
@@ -200,9 +187,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -245,8 +229,16 @@ class _QuestionFeedState extends State<QuestionFeed> {
                               colorOfButton: Color(0xFFEB1555),
                               onPressedRoundButton: () {
                                 Provider.of<Data>(context, listen: false)
-                                        .onVideoResume =
+                                        .videoId =
+                                    YoutubePlayer.convertUrlToId(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .feedCards[index]
+                                            .content)!;
+                                Provider.of<Data>(context, listen: false)
+                                        .videoStartingPoint =
                                     ytController.value.position.inSeconds;
+                                ytController.pause();
                                 Provider.of<Data>(context, listen: false)
                                     .increasekarma();
                                 showDialog(
@@ -276,10 +268,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                                 listen: false)
                                             .feedCards[index]
                                             .heading),
-                                    id: Provider.of<Data>(context,
-                                            listen: false)
-                                        .feedCards[index]
-                                        .id,
                                     imageUrl: Provider.of<Data>(context,
                                             listen: false)
                                         .feedCards[index]
@@ -309,13 +297,13 @@ class _QuestionFeedState extends State<QuestionFeed> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                   child: Text(
-                                    'Video not available',
+                                    'This piece of gold is not available',
                                     maxLines: 2,
                                     style: TextStyle(
                                       fontSize: 20.sp,
@@ -327,7 +315,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 10, 10),
                                   child: Text(
-                                    'video not available we are looking at this issue scroll up',
+                                    'You continue learning we are getting back with this content',
                                     maxLines: 8,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
