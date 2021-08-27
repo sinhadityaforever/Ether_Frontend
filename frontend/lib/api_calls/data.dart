@@ -661,6 +661,7 @@ class Data extends ChangeNotifier {
       'isReply': isReply,
       'repliedTo': repliedTo
     });
+    print(message);
   }
 
   void sendMessage(String message, int senderId, int recieverId, bool isPhoto,
