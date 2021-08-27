@@ -312,7 +312,7 @@ class Data extends ChangeNotifier {
             textOfButton: 'Networking with like minded people',
           ),
           InterestModel(
-            textOfButton: 'Learning best ways of marketting',
+            textOfButton: 'Learning best ways of marketing',
           ),
           InterestModel(
             textOfButton: 'Building an audience',
@@ -1241,8 +1241,28 @@ class Data extends ChangeNotifier {
     notifyListeners();
     print(timestamp);
     print(onVideoResume);
-    onVideoResume = 0;
 
     return true;
+  }
+
+  firstCharacterUpper(String text) {
+    List arrayPieces = [];
+
+    String outPut = '';
+
+    // text =
+    //     'this is only a example'; // This is not necessary, is only for the example. The text here is that one is passed in parameter.
+
+    text.split(' ').forEach((sepparetedWord) {
+      arrayPieces.add(sepparetedWord);
+    });
+
+    arrayPieces.forEach((word) {
+      word =
+          "${word[0].toString().toUpperCase()}${word.toString().substring(1)} ";
+      outPut += word;
+    });
+
+    return outPut;
   }
 }
