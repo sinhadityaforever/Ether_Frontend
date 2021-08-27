@@ -112,7 +112,7 @@ class _FeedCardState extends State<FeedCard> {
           controlsVisibleAtStart: true,
           autoPlay: false,
           mute: false,
-          startAt: Provider.of<Data>(context, listen: false).onVideoResume,
+          startAt: Provider.of<Data>(context).onVideoResume,
         ),
       );
 

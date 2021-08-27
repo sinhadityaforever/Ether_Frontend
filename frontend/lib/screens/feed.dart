@@ -25,6 +25,9 @@ class _QuestionFeedState extends State<QuestionFeed> {
                 Provider.of<Data>(context, listen: false).feedCards.toString() +
                     'ferodfe');
             return PageView.builder(
+                onPageChanged: (index) {
+                  Provider.of<Data>(context, listen: false).onVideoResume = 0;
+                },
                 scrollDirection: Axis.vertical,
                 itemCount: Provider.of<Data>(context).feedCards.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -117,8 +120,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         controlsVisibleAtStart: true,
                         autoPlay: false,
                         mute: false,
-                        startAt: Provider.of<Data>(context, listen: false)
-                            .onVideoResume,
+                        startAt: Provider.of<Data>(context).onVideoResume,
                       ),
                     );
                     return Card(
@@ -197,8 +199,11 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                     const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: Text(
                                   Provider.of<Data>(context, listen: false)
-                                      .feedCards[index]
-                                      .heading,
+                                      .firstCharacterUpper(Provider.of<Data>(
+                                              context,
+                                              listen: false)
+                                          .feedCards[index]
+                                          .heading),
                                   maxLines: 2,
                                   style: TextStyle(
                                     fontSize: 20.sp,
@@ -228,6 +233,9 @@ class _QuestionFeedState extends State<QuestionFeed> {
                             colorOfButton: Color(0xFFEB1555),
                             onPressedRoundButton: () {
                               Provider.of<Data>(context, listen: false)
+                                      .onVideoResume =
+                                  ytController.value.position.inSeconds;
+                              Provider.of<Data>(context, listen: false)
                                   .increasekarma();
                               showDialog(
                                 context: context,
@@ -251,8 +259,11 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                           .desco,
                                   heading:
                                       Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .heading,
+                                          .firstCharacterUpper(
+                                              Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .heading),
                                   id: Provider.of<Data>(context, listen: false)
                                       .feedCards[index]
                                       .id,
