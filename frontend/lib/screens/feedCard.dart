@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
-import 'package:frontend/widgets/popup_screen.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -8,7 +8,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class FeedCardArguments {
   bool isVideo;
   String imageUrl;
-  int id;
+
   String heading;
   String content;
   String desco;
@@ -17,7 +17,6 @@ class FeedCardArguments {
     required this.content,
     required this.desco,
     required this.heading,
-    required this.id,
     required this.imageUrl,
     required this.isVideo,
   });
@@ -105,14 +104,14 @@ class _FeedCardState extends State<FeedCard> {
     } else {
       YoutubePlayerController ytController = YoutubePlayerController(
         initialVideoId:
-            YoutubePlayer.convertUrlToId(args.content)!, //Add videoID.
+            Provider.of<Data>(context, listen: false).videoId, //Add videoID.
 
         flags: YoutubePlayerFlags(
           hideControls: false,
           controlsVisibleAtStart: true,
-          autoPlay: false,
+          autoPlay: true,
           mute: false,
-          startAt: Provider.of<Data>(context).onVideoResume,
+          startAt: Provider.of<Data>(context, listen: false).videoStartingPoint,
         ),
       );
 
