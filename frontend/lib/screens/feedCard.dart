@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/widgets/popup_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -33,14 +34,18 @@ class _FeedCardState extends State<FeedCard> {
     final args =
         ModalRoute.of(context)!.settings.arguments as FeedCardArguments;
     if (args.isVideo == false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Karma up by 5 points keep going !! ',
+      return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Ether.',
+            style: TextStyle(
+              fontSize: 30.sp,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFFEB1555),
+            ),
           ),
         ),
-      );
-      return Scaffold(
         body: Card(
           elevation: 20,
           shadowColor: Colors.black,
@@ -112,6 +117,17 @@ class _FeedCardState extends State<FeedCard> {
       );
 
       return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Ether.',
+            style: TextStyle(
+              fontSize: 30.sp,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFFEB1555),
+            ),
+          ),
+        ),
         body: Card(
           elevation: 20,
           shadowColor: Colors.black,
@@ -159,11 +175,14 @@ class _FeedCardState extends State<FeedCard> {
                   },
                 ),
               ),
+              SizedBox(
+                height: 20.h,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                    padding: const EdgeInsets.fromLTRB(9, 0, 10, 0),
                     child: Text(
                       args.heading,
                       style: TextStyle(
@@ -174,7 +193,7 @@ class _FeedCardState extends State<FeedCard> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    padding: const EdgeInsets.fromLTRB(9, 0, 10, 10),
                     child: SingleChildScrollView(
                       child: Text(
                         args.desco.replaceAll("20", '\n\n\u2022 '),

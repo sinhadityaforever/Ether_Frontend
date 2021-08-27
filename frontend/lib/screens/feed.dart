@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/screens/feedCard.dart';
+import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
@@ -228,7 +229,14 @@ class _QuestionFeedState extends State<QuestionFeed> {
                             onPressedRoundButton: () {
                               Provider.of<Data>(context, listen: false)
                                   .increasekarma();
-
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => Popup(
+                                  popupTitle: "Karma up by 5!",
+                                  popuptext:
+                                      "Deep diving into videos and watching them completely increments your karma keep goin",
+                                ),
+                              );
                               Navigator.pushNamed(
                                 context,
                                 '/feedCard',
