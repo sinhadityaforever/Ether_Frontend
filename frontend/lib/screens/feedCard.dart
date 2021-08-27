@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
-
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';

@@ -105,184 +105,232 @@ class _QuestionFeedState extends State<QuestionFeed> {
                       ),
                     );
                   } else {
-                    YoutubePlayerController ytController =
-                        YoutubePlayerController(
-                      initialVideoId: YoutubePlayer.convertUrlToId(
-                          Provider.of<Data>(context, listen: false)
-                              .feedCards[index]
-                              .content)!, //Add videoID.
+                    try {
+                      YoutubePlayerController ytController =
+                          YoutubePlayerController(
+                        initialVideoId: YoutubePlayer.convertUrlToId(
+                            Provider.of<Data>(context, listen: false)
+                                .feedCards[index]
+                                .content)!, //Add videoID.
 
-                      flags: YoutubePlayerFlags(
-                        hideControls: false,
-                        controlsVisibleAtStart: true,
-                        autoPlay: false,
-                        mute: false,
-                      ),
-                    );
-                    return Card(
-                      margin: EdgeInsets.all(20.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 20,
-                      shadowColor: Colors.black,
-                      color: Color(0xFF111328),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Container(
-                            height: 350.h,
-                            width: 350.w,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30.r),
-                                topRight: Radius.circular(30.r),
-                              ),
-                              child: YoutubePlayerBuilder(
-                                player: YoutubePlayer(
-                                  topActions: [
-                                    PlaybackSpeedButton(
-                                      icon: Icon(Icons.speed),
-                                    ),
-                                  ],
-                                  bottomActions: [
-                                    IconButton(
-                                      onPressed: () {
-                                        Provider.of<Data>(context,
-                                                    listen: false)
-                                                .videoId =
-                                            YoutubePlayer.convertUrlToId(
-                                                Provider.of<Data>(context,
-                                                        listen: false)
-                                                    .feedCards[index]
-                                                    .content)!;
-                                        Provider.of<Data>(context,
-                                                    listen: false)
-                                                .videoStartingPoint =
-                                            ytController
-                                                .value.position.inSeconds;
-                                        ytController.pause();
-                                        Navigator.pushNamed(
-                                            context, '/fullScreenPlayer');
-                                      },
-                                      icon: Icon(Icons.fullscreen),
-                                    ),
-                                    ProgressBar(
-                                      isExpanded: true,
-                                    ),
-                                    CurrentPosition(),
-                                    RemainingDuration(),
-                                  ],
-                                  aspectRatio: 16 / 9,
-                                  controller: ytController,
-                                  showVideoProgressIndicator: true,
-                                  progressIndicatorColor: Color(0xFFEB1555),
+                        flags: YoutubePlayerFlags(
+                          hideControls: false,
+                          controlsVisibleAtStart: true,
+                          autoPlay: false,
+                          mute: false,
+                        ),
+                      );
+                      return Card(
+                        margin: EdgeInsets.all(20.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 20,
+                        shadowColor: Colors.black,
+                        color: Color(0xFF111328),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Container(
+                              height: 350.h,
+                              width: 350.w,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(30.r),
+                                  topRight: Radius.circular(30.r),
                                 ),
-                                builder: (context, player) {
-                                  return player;
-                                },
+                                child: YoutubePlayerBuilder(
+                                  player: YoutubePlayer(
+                                    topActions: [
+                                      PlaybackSpeedButton(
+                                        icon: Icon(Icons.speed),
+                                      ),
+                                    ],
+                                    bottomActions: [
+                                      IconButton(
+                                        onPressed: () {
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoId =
+                                              YoutubePlayer.convertUrlToId(
+                                                  Provider.of<Data>(context,
+                                                          listen: false)
+                                                      .feedCards[index]
+                                                      .content)!;
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoStartingPoint =
+                                              ytController
+                                                  .value.position.inSeconds;
+                                          ytController.pause();
+                                          Navigator.pushNamed(
+                                              context, '/fullScreenPlayer');
+                                        },
+                                        icon: Icon(Icons.fullscreen),
+                                      ),
+                                      ProgressBar(
+                                        isExpanded: true,
+                                      ),
+                                      CurrentPosition(),
+                                      RemainingDuration(),
+                                    ],
+                                    aspectRatio: 16 / 9,
+                                    controller: ytController,
+                                    showVideoProgressIndicator: true,
+                                    progressIndicatorColor: Color(0xFFEB1555),
+                                  ),
+                                  builder: (context, player) {
+                                    return player;
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                child: Text(
-                                  Provider.of<Data>(context, listen: false)
-                                      .firstCharacterUpper(Provider.of<Data>(
-                                              context,
-                                              listen: false)
-                                          .feedCards[index]
-                                          .heading),
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    fontSize: 20.sp,
-                                    color: Color(0xFFEB1555),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  child: Text(
+                                    Provider.of<Data>(context, listen: false)
+                                        .firstCharacterUpper(Provider.of<Data>(
+                                                context,
+                                                listen: false)
+                                            .feedCards[index]
+                                            .heading),
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      color: Color(0xFFEB1555),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                child: Text(
-                                  Provider.of<Data>(context, listen: false)
-                                      .feedCards[index]
-                                      .desco
-                                      .replaceAll("20", '\n\n\u2022 '),
-                                  maxLines: 8,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 17.sp,
-                                    color: Colors.white60,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                  child: Text(
+                                    Provider.of<Data>(context, listen: false)
+                                        .feedCards[index]
+                                        .desco
+                                        .replaceAll("20", '\n\n\u2022 '),
+                                    maxLines: 8,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 17.sp,
+                                      color: Colors.white60,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          RoundedButton(
-                            colorOfButton: Color(0xFFEB1555),
-                            onPressedRoundButton: () {
-                              Provider.of<Data>(context, listen: false)
-                                      .videoId =
-                                  YoutubePlayer.convertUrlToId(
-                                      Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .content)!;
-                              Provider.of<Data>(context, listen: false)
-                                      .videoStartingPoint =
-                                  ytController.value.position.inSeconds;
-                              ytController.pause();
-                              Provider.of<Data>(context, listen: false)
-                                  .increasekarma();
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) => Popup(
-                                  popupTitle: "Karma up by 5!",
-                                  popuptext:
-                                      "Deep diving into videos and watching them completely increments your karma keep goin",
+                              ],
+                            ),
+                            RoundedButton(
+                              colorOfButton: Color(0xFFEB1555),
+                              onPressedRoundButton: () {
+                                Provider.of<Data>(context, listen: false)
+                                        .videoId =
+                                    YoutubePlayer.convertUrlToId(
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .feedCards[index]
+                                            .content)!;
+                                Provider.of<Data>(context, listen: false)
+                                        .videoStartingPoint =
+                                    ytController.value.position.inSeconds;
+                                ytController.pause();
+                                Provider.of<Data>(context, listen: false)
+                                    .increasekarma();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) => Popup(
+                                    popupTitle: "Karma up by 5!",
+                                    popuptext:
+                                        "Deep diving into videos and watching them completely increments your karma keep goin",
+                                  ),
+                                );
+                                Navigator.pushNamed(
+                                  context,
+                                  '/feedCard',
+                                  arguments: FeedCardArguments(
+                                    content: Provider.of<Data>(context,
+                                            listen: false)
+                                        .feedCards[index]
+                                        .content,
+                                    desco: Provider.of<Data>(context,
+                                            listen: false)
+                                        .feedCards[index]
+                                        .desco,
+                                    heading: Provider.of<Data>(context,
+                                            listen: false)
+                                        .firstCharacterUpper(Provider.of<Data>(
+                                                context,
+                                                listen: false)
+                                            .feedCards[index]
+                                            .heading),
+                                    imageUrl: Provider.of<Data>(context,
+                                            listen: false)
+                                        .feedCards[index]
+                                        .imageUrl,
+                                    isVideo: Provider.of<Data>(context,
+                                            listen: false)
+                                        .feedCards[index]
+                                        .isVideo,
+                                  ),
+                                );
+                              },
+                              textOfButton: 'Deep Dive',
+                            )
+                          ],
+                        ),
+                      );
+                    } catch (e) {
+                      return Card(
+                        margin: EdgeInsets.all(20.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 20,
+                        shadowColor: Colors.black,
+                        color: Color(0xFF111328),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  child: Text(
+                                    'This piece of gold is not available',
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      color: Color(0xFFEB1555),
+                                    ),
+                                  ),
                                 ),
-                              );
-                              Navigator.pushNamed(
-                                context,
-                                '/feedCard',
-                                arguments: FeedCardArguments(
-                                  content:
-                                      Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .content,
-                                  desco:
-                                      Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .desco,
-                                  heading:
-                                      Provider.of<Data>(context, listen: false)
-                                          .firstCharacterUpper(
-                                              Provider.of<Data>(context,
-                                                      listen: false)
-                                                  .feedCards[index]
-                                                  .heading),
-                                  imageUrl:
-                                      Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .imageUrl,
-                                  isVideo:
-                                      Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .isVideo,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                  child: Text(
+                                    'You continue learning we are getting back with this content',
+                                    maxLines: 8,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 17.sp,
+                                      color: Colors.white60,
+                                    ),
+                                  ),
                                 ),
-                              );
-                            },
-                            textOfButton: 'Deep Dive',
-                          )
-                        ],
-                      ),
-                    );
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   }
                 });
           } else {
