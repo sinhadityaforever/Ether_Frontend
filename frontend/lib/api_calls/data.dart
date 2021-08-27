@@ -606,7 +606,7 @@ class Data extends ChangeNotifier {
             false,
             msg['isPhoto'],
             msg['imageUrl'],
-            msg['uid'],
+            msg['uuid'],
             msg['isReply'],
             msg['repliedTo']);
         print('Working fine Connect');
