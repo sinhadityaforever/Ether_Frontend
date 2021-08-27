@@ -15,8 +15,6 @@ import 'package:provider/provider.dart';
 import '../widgets/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:swipe_to/swipe_to.dart';
 
 class ChatPageArguments {
   final String avatarUrl;
@@ -142,41 +140,46 @@ class _ChatPageState extends State<ChatPage> {
 
                 if (message['recieverId'] == args.recieverId ||
                     message['senderId'] == args.recieverId) {
-                  return SwipeTo(
-                    onRightSwipe: () {
-                      setState(() {
-                        isReplying = true;
-                        replyMessage(message);
-                        focusNode.requestFocus();
-                        print(Provider.of<Data>(context, listen: false)
-                            .repliedMessage);
-                      });
-                    },
-                    onLeftSwipe: () {
-                      setState(() {
-                        if (message['senderId'] ==
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser &&
-                            message['isAdmin'] == false) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => NegativePopup(
-                              popuptext:
-                                  'Do you want to remove the evidence of this message 🧐',
-                              onPresseedPopup: () {
-                                setState(() {
+                  return GestureDetector(
+                    onPanUpdate: (details) {
+                      // Swiping in right direction.
+                      if (details.delta.dx > 0) {
+                        setState(() {
+                          isReplying = true;
+                          replyMessage(message);
+                          focusNode.requestFocus();
+                          print(Provider.of<Data>(context, listen: false)
+                              .repliedMessage);
+                        });
+                      }
+
+                      // Swiping in left direction.
+                      if (details.delta.dx < 0) {
+                        setState(() {
+                          if (message['senderId'] ==
                                   Provider.of<Data>(context, listen: false)
-                                      .deleteMessage(
-                                          message['uuid'], args.recieverId);
-                                  Navigator.pop(context);
-                                });
-                              },
-                              negativeTitle: 'Delete Message',
-                              action: 'Delete',
-                            ),
-                          );
-                        }
-                      });
+                                      .idOfUser &&
+                              message['isAdmin'] == false) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => NegativePopup(
+                                popuptext:
+                                    'Do you want to remove the evidence of this message 🧐',
+                                onPresseedPopup: () {
+                                  setState(() {
+                                    Provider.of<Data>(context, listen: false)
+                                        .deleteMessage(
+                                            message['uuid'], args.recieverId);
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                negativeTitle: 'Delete Message',
+                                action: 'Delete',
+                              ),
+                            );
+                          }
+                        });
+                      }
                     },
                     child: ChatBubble(
                       texto: message['message'],

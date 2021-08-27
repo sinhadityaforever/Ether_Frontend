@@ -12,11 +12,8 @@ import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../widgets/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:swipe_to/swipe_to.dart';
 
 class ChatRoomPageArguments {
   final String roomAvatarUrl;
@@ -145,41 +142,46 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 final message = Provider.of<Data>(context).roomMessages[index];
 
                 if (message['roomId'] == args.roomId) {
-                  return SwipeTo(
-                    onRightSwipe: () {
-                      setState(() {
-                        isReplying = true;
-                        replyMessage(message);
+                  return GestureDetector(
+                    onPanUpdate: (details) {
+                      // Swiping in right direction.
+                      if (details.delta.dx > 0) {
+                        setState(() {
+                          isReplying = true;
+                          replyMessage(message);
 
-                        focusNode.requestFocus();
-                      });
-                    },
-                    onLeftSwipe: () {
-                      setState(() {
-                        print('fero Lord');
-                        if (message['senderId'] ==
-                                Provider.of<Data>(context, listen: false)
-                                    .idOfUser &&
-                            message['isAdmin'] == false) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => NegativePopup(
-                              popuptext:
-                                  'Do you want to remove the evidence of this message 🧐',
-                              onPresseedPopup: () {
-                                setState(() {
+                          focusNode.requestFocus();
+                        });
+                      }
+
+                      // Swiping in left direction.
+                      if (details.delta.dx < 0) {
+                        setState(() {
+                          print('fero Lord');
+                          if (message['senderId'] ==
                                   Provider.of<Data>(context, listen: false)
-                                      .deleteRoomMessage(
-                                          message['uuid'], args.roomId);
-                                  Navigator.pop(context);
-                                });
-                              },
-                              negativeTitle: 'Delete Message',
-                              action: 'Delete',
-                            ),
-                          );
-                        }
-                      });
+                                      .idOfUser &&
+                              message['isAdmin'] == false) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => NegativePopup(
+                                popuptext:
+                                    'Do you want to remove the evidence of this message 🧐',
+                                onPresseedPopup: () {
+                                  setState(() {
+                                    Provider.of<Data>(context, listen: false)
+                                        .deleteRoomMessage(
+                                            message['uuid'], args.roomId);
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                negativeTitle: 'Delete Message',
+                                action: 'Delete',
+                              ),
+                            );
+                          }
+                        });
+                      }
                     },
                     child: ChatRoomBubble(
                       texto: message['message'],
