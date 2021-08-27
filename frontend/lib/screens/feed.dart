@@ -25,9 +25,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                 Provider.of<Data>(context, listen: false).feedCards.toString() +
                     'ferodfe');
             return PageView.builder(
-                onPageChanged: (index) {
-                  Provider.of<Data>(context, listen: false).onVideoResume = 0;
-                },
                 scrollDirection: Axis.vertical,
                 itemCount: Provider.of<Data>(context).feedCards.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -120,7 +117,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         controlsVisibleAtStart: true,
                         autoPlay: false,
                         mute: false,
-                        startAt: Provider.of<Data>(context).onVideoResume,
                       ),
                     );
                     return Card(
@@ -233,8 +229,15 @@ class _QuestionFeedState extends State<QuestionFeed> {
                             colorOfButton: Color(0xFFEB1555),
                             onPressedRoundButton: () {
                               Provider.of<Data>(context, listen: false)
-                                      .onVideoResume =
+                                      .videoId =
+                                  YoutubePlayer.convertUrlToId(
+                                      Provider.of<Data>(context, listen: false)
+                                          .feedCards[index]
+                                          .content)!;
+                              Provider.of<Data>(context, listen: false)
+                                      .videoStartingPoint =
                                   ytController.value.position.inSeconds;
+                              ytController.pause();
                               Provider.of<Data>(context, listen: false)
                                   .increasekarma();
                               showDialog(
@@ -264,9 +267,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                                       listen: false)
                                                   .feedCards[index]
                                                   .heading),
-                                  id: Provider.of<Data>(context, listen: false)
-                                      .feedCards[index]
-                                      .id,
                                   imageUrl:
                                       Provider.of<Data>(context, listen: false)
                                           .feedCards[index]
