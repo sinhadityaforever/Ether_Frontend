@@ -623,14 +623,16 @@ class Data extends ChangeNotifier {
             roomMsg['imageUrl'],
             roomMsg['sender_name'],
             roomMsg['uuid'],
-            roomMsg['is_reply'],
-            roomMsg['replied_to']);
+            roomMsg['isReply'],
+            roomMsg['repliedTo']);
         socket.on('delete_message', (data) {
           messages.removeWhere((element) => element['uuid'] == data['uuid']);
+          notifyListeners();
         });
         socket.on('delete_room_message', (data) {
           roomMessages
               .removeWhere((element) => element['uuid'] == data['uuid']);
+          notifyListeners();
         });
       });
     });
