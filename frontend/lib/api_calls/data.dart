@@ -675,6 +675,7 @@ class Data extends ChangeNotifier {
       "isReply": isReply,
       "repliedTo": repliedTo
     });
+    print(message);
   }
 
   late ContactsModel selectedContact;
