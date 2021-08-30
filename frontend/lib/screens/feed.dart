@@ -30,6 +30,10 @@ class _QuestionFeedState extends State<QuestionFeed> {
                 itemCount: Provider.of<Data>(context).feedCards.length,
                 itemBuilder: (BuildContext context, int index) {
                   print(Provider.of<Data>(context).feedCards.length);
+                  bool isBookmarked = Provider.of<Data>(context, listen: false)
+                      .isBookMark(Provider.of<Data>(context, listen: false)
+                          .feedCards[index]
+                          .id);
                   if (Provider.of<Data>(context).feedCards[index].isVideo ==
                       false) {
                     return Card(
@@ -121,6 +125,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                           mute: false,
                         ),
                       );
+
                       return Card(
                         margin: EdgeInsets.all(20.0),
                         shape: RoundedRectangleBorder(
@@ -292,25 +297,29 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   textOfButton: 'Deep Dive',
                                 ),
                                 LikeButton(
-                                  likeBuilder: (bool isLiked) {
-                                    return Icon(
-                                      FontAwesomeIcons.solidBookmark,
-                                      color: isLiked
-                                          ? Colors.deepPurpleAccent
-                                          : Colors.grey,
-                                    );
-                                  },
-                                  onTap: () {
-                                    Provider.of<Data>(context, listen: false)
-                                        .postBookmark(
+                                    isLiked: isBookmarked,
+                                    likeBuilder: (isLiked) {
+                                      return Icon(
+                                        FontAwesomeIcons.solidBookmark,
+                                        color: isLiked
+                                            ? Colors.deepPurpleAccent
+                                            : Colors.grey,
+                                      );
+                                    },
+                                    onTap: (isLiked) async {
+                                      isBookmarked = !isBookmarked;
+
                                       Provider.of<Data>(context, listen: false)
-                                          .feedCards[index]
-                                          .id,
-                                      'der',
-                                      false,
-                                    );
-                                  },
-                                ),
+                                          .postBookmark(
+                                              Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .id,
+                                              'no notes',
+                                              isLiked);
+                                      // setState(() {});
+                                      return !isLiked;
+                                    }),
                               ],
                             )
                           ],
