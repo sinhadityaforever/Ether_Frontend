@@ -17,7 +17,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
   String uid = '';
-  String ip = '192.168.0.104';
+  String ip = '192.168.0.194';
   late final User googleUser;
   var signupEmail;
   var otp;
@@ -1276,15 +1276,9 @@ class Data extends ChangeNotifier {
 
   bool isBookMark(int cardId) {
     try {
-      var entry = bookmarks
-          .firstWhere((element) => element['card_id'] == cardId, orElse: () {
-        return {};
-      });
-      if (entry != {}) {
-        return false;
-      } else {
-        return false;
-      }
+      var entry = bookmarks.any((element) => element['card_id'] == cardId);
+      print(entry);
+      return entry;
     } catch (e) {
       print(e);
       return false;
@@ -1302,7 +1296,7 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
       );
-
+      bookmarks.clear;
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         bookmarks.add({
           "card_id": jsonDecode(response.body)[i]['card_id'],
@@ -1320,8 +1314,9 @@ class Data extends ChangeNotifier {
     }
   }
 
-  Future<bool> postBookmark(int cardId, String notes, bool isLiked) async {
+  Future<void> postBookmark(int cardId, String notes, bool isLiked) async {
     try {
+      print('initiated');
       http.Response response = await http.post(
         Uri.parse('http://$ip:5000/bookmark/post/${cardId}'),
         headers: {
@@ -1330,18 +1325,14 @@ class Data extends ChangeNotifier {
           'Authorization': 'Bearer ${tokenOfUser}',
         },
         body: jsonEncode({
-          'userId': idOfUser,
+          'user_id': idOfUser,
           'notes': notes,
         }),
       );
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        return false;
-      }
+      print('finished');
+      await getBookMark();
     } catch (e) {
       print(e);
-      return false;
     }
   }
 }
