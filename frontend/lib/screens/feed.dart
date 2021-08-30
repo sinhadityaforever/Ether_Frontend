@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/screens/feedCard.dart';
 import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:like_button/like_button.dart';
 
 class QuestionFeed extends StatefulWidget {
   @override
@@ -129,6 +130,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         shadowColor: Colors.black,
                         color: Color(0xFF111328),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
@@ -208,14 +210,14 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                     ),
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 20.h,
+                                ),
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 10, 10),
                                   child: Text(
-                                    Provider.of<Data>(context, listen: false)
-                                        .feedCards[index]
-                                        .desco
-                                        .replaceAll("20", '\n\n\u2022 '),
+                                    "\u2022 Write Your Notes By Bookmarking The idea \n\n\u2022 Show Your Love For The Idea By Liking \n\n\u2022 Deepdive To See Other People's Notes On This Idea",
                                     maxLines: 8,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -226,61 +228,90 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 ),
                               ],
                             ),
-                            RoundedButton(
-                              colorOfButton: Color(0xFFEB1555),
-                              onPressedRoundButton: () {
-                                Provider.of<Data>(context, listen: false)
-                                        .videoId =
-                                    YoutubePlayer.convertUrlToId(
-                                        Provider.of<Data>(context,
+                            SizedBox(
+                              height: 20.h,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                LikeButton(),
+                                RoundedButton(
+                                  colorOfButton: Color(0xFFEB1555),
+                                  onPressedRoundButton: () {
+                                    Provider.of<Data>(context, listen: false)
+                                            .videoId =
+                                        YoutubePlayer.convertUrlToId(
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .content)!;
+                                    Provider.of<Data>(context, listen: false)
+                                            .videoStartingPoint =
+                                        ytController.value.position.inSeconds;
+                                    ytController.pause();
+                                    Provider.of<Data>(context, listen: false)
+                                        .increasekarma();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) => Popup(
+                                        popupTitle: "Karma up by 5!",
+                                        popuptext:
+                                            "Deep diving into videos and watching them completely increments your karma keep goin",
+                                      ),
+                                    );
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/feedCard',
+                                      arguments: FeedCardArguments(
+                                        content: Provider.of<Data>(context,
                                                 listen: false)
                                             .feedCards[index]
-                                            .content)!;
-                                Provider.of<Data>(context, listen: false)
-                                        .videoStartingPoint =
-                                    ytController.value.position.inSeconds;
-                                ytController.pause();
-                                Provider.of<Data>(context, listen: false)
-                                    .increasekarma();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) => Popup(
-                                    popupTitle: "Karma up by 5!",
-                                    popuptext:
-                                        "Deep diving into videos and watching them completely increments your karma keep goin",
-                                  ),
-                                );
-                                Navigator.pushNamed(
-                                  context,
-                                  '/feedCard',
-                                  arguments: FeedCardArguments(
-                                    content: Provider.of<Data>(context,
-                                            listen: false)
-                                        .feedCards[index]
-                                        .content,
-                                    desco: Provider.of<Data>(context,
-                                            listen: false)
-                                        .feedCards[index]
-                                        .desco,
-                                    heading: Provider.of<Data>(context,
-                                            listen: false)
-                                        .firstCharacterUpper(Provider.of<Data>(
-                                                context,
+                                            .content,
+                                        desco: Provider.of<Data>(context,
                                                 listen: false)
                                             .feedCards[index]
-                                            .heading),
-                                    imageUrl: Provider.of<Data>(context,
-                                            listen: false)
-                                        .feedCards[index]
-                                        .imageUrl,
-                                    isVideo: Provider.of<Data>(context,
-                                            listen: false)
-                                        .feedCards[index]
-                                        .isVideo,
-                                  ),
-                                );
-                              },
-                              textOfButton: 'Deep Dive',
+                                            .desco,
+                                        heading: Provider.of<Data>(context,
+                                                listen: false)
+                                            .firstCharacterUpper(
+                                                Provider.of<Data>(context,
+                                                        listen: false)
+                                                    .feedCards[index]
+                                                    .heading),
+                                        imageUrl: Provider.of<Data>(context,
+                                                listen: false)
+                                            .feedCards[index]
+                                            .imageUrl,
+                                        isVideo: Provider.of<Data>(context,
+                                                listen: false)
+                                            .feedCards[index]
+                                            .isVideo,
+                                      ),
+                                    );
+                                  },
+                                  textOfButton: 'Deep Dive',
+                                ),
+                                LikeButton(
+                                  likeBuilder: (bool isLiked) {
+                                    return Icon(
+                                      FontAwesomeIcons.solidBookmark,
+                                      color: isLiked
+                                          ? Colors.deepPurpleAccent
+                                          : Colors.grey,
+                                    );
+                                  },
+                                  onTap: () {
+                                    Provider.of<Data>(context, listen: false)
+                                        .postBookmark(
+                                      Provider.of<Data>(context, listen: false)
+                                          .feedCards[index]
+                                          .id,
+                                      'der',
+                                      false,
+                                    );
+                                  },
+                                ),
+                              ],
                             )
                           ],
                         ),
