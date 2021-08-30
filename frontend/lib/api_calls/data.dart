@@ -17,6 +17,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
   String uid = '';
+  String ip = '192.168.0.104';
   late final User googleUser;
   var signupEmail;
   var otp;
@@ -106,12 +107,16 @@ class Data extends ChangeNotifier {
       String email, String password, String username, context) async {
     try {
       http.Response response = await http.post(
-          Uri.parse('https://chat.etherapp.social/users/signup'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(
-              {'email': email, 'password': password, 'username': username}));
+        Uri.parse('https://chat.etherapp.social/users/signup'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'username': username,
+        }),
+      );
 
       if (response.statusCode == 200) {
         dynamic token = jsonDecode(response.body)['token'];
@@ -1256,9 +1261,6 @@ class Data extends ChangeNotifier {
 
     String outPut = '';
 
-    // text =
-    //     'this is only a example'; // This is not necessary, is only for the example. The text here is that one is passed in parameter.
-
     text.split(' ').forEach((sepparetedWord) {
       arrayPieces.add(sepparetedWord);
     });
@@ -1270,5 +1272,76 @@ class Data extends ChangeNotifier {
     });
 
     return outPut;
+  }
+
+  bool isBookMark(int cardId) {
+    try {
+      var entry = bookmarks
+          .firstWhere((element) => element['card_id'] == cardId, orElse: () {
+        return {};
+      });
+      if (entry != {}) {
+        return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  List<Map<String, dynamic>> bookmarks = [];
+  Future<void> getBookMark() async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('http://$ip:5000/bookmark/get/$idOfUser'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+
+      for (var i = 0; i < jsonDecode(response.body).length; i++) {
+        bookmarks.add({
+          "card_id": jsonDecode(response.body)[i]['card_id'],
+          "notes": jsonDecode(response.body)[i]['notes'],
+          "heading": jsonDecode(response.body)[i]['heading'],
+          "content": jsonDecode(response.body)[i]['content'],
+          "is_admin": jsonDecode(response.body)[i]['is_admin'],
+          "occupation_id": jsonDecode(response.body)[i]['occupation_id'],
+          "start_at": jsonDecode(response.body)[i]['start_at'],
+          "end_at": jsonDecode(response.body)[i]['end_at'],
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<bool> postBookmark(int cardId, String notes, bool isLiked) async {
+    try {
+      http.Response response = await http.post(
+        Uri.parse('http://$ip:5000/bookmark/post/${cardId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+        body: jsonEncode({
+          'userId': idOfUser,
+          'notes': notes,
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }
