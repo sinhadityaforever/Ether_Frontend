@@ -1285,6 +1285,15 @@ class Data extends ChangeNotifier {
     }
   }
 
+  String findNote(int cardId) {
+    var bookmark = bookmarks
+        .singleWhere((element) => element['card_id'] == cardId, orElse: () {
+      return {'notes': 'no notes'};
+    });
+
+    return bookmark['notes'];
+  }
+
   List<Map<String, dynamic>> bookmarks = [];
   Future<void> getBookMark() async {
     try {
@@ -1385,6 +1394,32 @@ class Data extends ChangeNotifier {
         }),
       );
       likedCardsId.add(cardId);
+    }
+  }
+
+  List<Map<String, dynamic>> cardNotes = [];
+  Future<void> getCardNotes(cardId) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('https://chat.etherapp.social/bookmark/geto/$cardId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+      cardNotes.clear();
+
+      for (var i = 0; i < jsonDecode(response.body).length; i++) {
+        cardNotes.add({
+          "user_id": jsonDecode(response.body)[i]['user_id'],
+          "notes": jsonDecode(response.body)[i]['notes'],
+          "username": jsonDecode(response.body)[i]['username'],
+          "avatar_url": jsonDecode(response.body)[i]['avatar_url'],
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

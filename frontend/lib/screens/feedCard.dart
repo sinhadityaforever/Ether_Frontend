@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import 'bookmark_page.dart';
+
 class FeedCardArguments {
   bool isVideo;
   String imageUrl;
-
+  int cardId;
   String heading;
   String content;
   String desco;
 
   FeedCardArguments({
+    required this.cardId,
     required this.content,
     required this.desco,
     required this.heading,
@@ -31,6 +36,10 @@ class _FeedCardState extends State<FeedCard> {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as FeedCardArguments;
+    bool isBookmarked =
+        Provider.of<Data>(context, listen: false).isBookMark(args.cardId);
+    bool isLoved =
+        Provider.of<Data>(context, listen: false).isLiked(args.cardId);
     if (args.isVideo == false) {
       return Scaffold(
         appBar: AppBar(
@@ -185,6 +194,50 @@ class _FeedCardState extends State<FeedCard> {
                       color: Color(0xFFEB1555),
                     ),
                   ),
+                ),
+                Row(
+                  children: [
+                    LikeButton(
+                      isLiked: isLoved,
+                      onTap: (isLiked) async {
+                        isLoved = !isLoved;
+                        Provider.of<Data>(context, listen: false)
+                            .interactWithLike(args.cardId);
+                        return !isLiked;
+                      },
+                    ),
+                    LikeButton(
+                        isLiked: isBookmarked,
+                        likeBuilder: (isLiked) {
+                          return Icon(
+                            FontAwesomeIcons.solidBookmark,
+                            color:
+                                isLiked ? Colors.deepPurpleAccent : Colors.grey,
+                          );
+                        },
+                        onTap: (isLiked) async {
+                          Provider.of<Data>(context, listen: false).videoId =
+                              YoutubePlayer.convertUrlToId(args.content)!;
+                          Provider.of<Data>(context, listen: false)
+                                  .videoStartingPoint =
+                              ytController.value.position.inSeconds;
+                          ytController.pause();
+                          Navigator.pushNamed(
+                            context,
+                            '/bookmarkPage',
+                            arguments: BookmarkArguments(
+                              content: args.content,
+                              heading: args.heading,
+                              imageUrl: args.imageUrl,
+                              isVideo: args.isVideo,
+                              cardId: args.cardId,
+                            ),
+                          );
+                          isBookmarked = !isBookmarked;
+
+                          return !isLiked;
+                        })
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(9, 0, 10, 10),
