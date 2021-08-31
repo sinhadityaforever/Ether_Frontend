@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/screens/bookmark_page.dart';
 import 'package:frontend/screens/feedCard.dart';
 import 'package:frontend/widgets/popup_screen.dart';
 import 'package:frontend/widgets/rounded_button.dart';
@@ -115,6 +116,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                     );
                   } else {
                     try {
+                      String notes = "";
                       YoutubePlayerController ytController =
                           YoutubePlayerController(
                         initialVideoId: YoutubePlayer.convertUrlToId(
@@ -139,7 +141,6 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         shadowColor: Colors.black,
                         color: Color(0xFF111328),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
@@ -199,6 +200,9 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -220,7 +224,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 20.h,
+                                  height: 10.h,
                                 ),
                                 Padding(
                                   padding:
@@ -235,109 +239,151 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20.h,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                LikeButton(
-                                  isLiked: isLoved,
-                                  onTap: (isLiked) async {
-                                    isLoved = !isLoved;
-                                    Provider.of<Data>(context, listen: false)
-                                        .interactWithLike(Provider.of<Data>(
-                                                context,
-                                                listen: false)
-                                            .feedCards[index]
-                                            .id);
-                                    return !isLiked;
-                                  },
+                                SizedBox(
+                                  height: 20.h,
                                 ),
-                                RoundedButton(
-                                  colorOfButton: Color(0xFFEB1555),
-                                  onPressedRoundButton: () {
-                                    Provider.of<Data>(context, listen: false)
-                                            .videoId =
-                                        YoutubePlayer.convertUrlToId(
-                                            Provider.of<Data>(context,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    LikeButton(
+                                      isLiked: isLoved,
+                                      onTap: (isLiked) async {
+                                        isLoved = !isLoved;
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .interactWithLike(Provider.of<Data>(
+                                                    context,
                                                     listen: false)
                                                 .feedCards[index]
-                                                .content)!;
-                                    Provider.of<Data>(context, listen: false)
-                                            .videoStartingPoint =
-                                        ytController.value.position.inSeconds;
-                                    ytController.pause();
-                                    Provider.of<Data>(context, listen: false)
-                                        .increasekarma();
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) => Popup(
-                                        popupTitle: "Karma up by 5!",
-                                        popuptext:
-                                            "Deep diving into videos and watching them completely increments your karma keep goin",
-                                      ),
-                                    );
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/feedCard',
-                                      arguments: FeedCardArguments(
-                                        content: Provider.of<Data>(context,
-                                                listen: false)
-                                            .feedCards[index]
-                                            .content,
-                                        desco: Provider.of<Data>(context,
-                                                listen: false)
-                                            .feedCards[index]
-                                            .desco,
-                                        heading: Provider.of<Data>(context,
-                                                listen: false)
-                                            .firstCharacterUpper(
+                                                .id);
+                                        return !isLiked;
+                                      },
+                                    ),
+                                    RoundedButton(
+                                      colorOfButton: Color(0xFFEB1555),
+                                      onPressedRoundButton: () {
+                                        Provider.of<Data>(context,
+                                                    listen: false)
+                                                .videoId =
+                                            YoutubePlayer.convertUrlToId(
                                                 Provider.of<Data>(context,
                                                         listen: false)
                                                     .feedCards[index]
-                                                    .heading),
-                                        imageUrl: Provider.of<Data>(context,
+                                                    .content)!;
+                                        Provider.of<Data>(context,
+                                                    listen: false)
+                                                .videoStartingPoint =
+                                            ytController
+                                                .value.position.inSeconds;
+                                        ytController.pause();
+                                        Provider.of<Data>(context,
                                                 listen: false)
-                                            .feedCards[index]
-                                            .imageUrl,
-                                        isVideo: Provider.of<Data>(context,
-                                                listen: false)
-                                            .feedCards[index]
-                                            .isVideo,
-                                      ),
-                                    );
-                                  },
-                                  textOfButton: 'Deep Dive',
-                                ),
-                                LikeButton(
-                                    isLiked: isBookmarked,
-                                    likeBuilder: (isLiked) {
-                                      return Icon(
-                                        FontAwesomeIcons.solidBookmark,
-                                        color: isLiked
-                                            ? Colors.deepPurpleAccent
-                                            : Colors.grey,
-                                      );
-                                    },
-                                    onTap: (isLiked) async {
-                                      isBookmarked = !isBookmarked;
-
-                                      Provider.of<Data>(context, listen: false)
-                                          .postBookmark(
-                                              Provider.of<Data>(context,
+                                            .increasekarma();
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              Popup(
+                                            popupTitle: "Karma up by 5!",
+                                            popuptext:
+                                                "Deep diving into videos and watching them completely increments your karma keep goin",
+                                          ),
+                                        );
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/feedCard',
+                                          arguments: FeedCardArguments(
+                                            content: Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .content,
+                                            desco: Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .desco,
+                                            heading: Provider.of<Data>(context,
+                                                    listen: false)
+                                                .firstCharacterUpper(
+                                                    Provider.of<Data>(context,
+                                                            listen: false)
+                                                        .feedCards[index]
+                                                        .heading),
+                                            imageUrl: Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .imageUrl,
+                                            isVideo: Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .isVideo,
+                                          ),
+                                        );
+                                      },
+                                      textOfButton: 'Deep Dive',
+                                    ),
+                                    LikeButton(
+                                        isLiked: isBookmarked,
+                                        likeBuilder: (isLiked) {
+                                          return Icon(
+                                            FontAwesomeIcons.solidBookmark,
+                                            color: isLiked
+                                                ? Colors.deepPurpleAccent
+                                                : Colors.grey,
+                                          );
+                                        },
+                                        onTap: (isLiked) async {
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoId =
+                                              YoutubePlayer.convertUrlToId(
+                                                  Provider.of<Data>(context,
+                                                          listen: false)
+                                                      .feedCards[index]
+                                                      .content)!;
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoStartingPoint =
+                                              ytController
+                                                  .value.position.inSeconds;
+                                          ytController.pause();
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/bookmarkPage',
+                                            arguments: BookmarkArguments(
+                                              content: Provider.of<Data>(
+                                                      context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .content,
+                                              heading: Provider.of<Data>(
+                                                      context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .heading,
+                                              imageUrl: Provider.of<Data>(
+                                                      context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .imageUrl,
+                                              isVideo: Provider.of<Data>(
+                                                      context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .isVideo,
+                                              cardId: Provider.of<Data>(context,
                                                       listen: false)
                                                   .feedCards[index]
                                                   .id,
-                                              'no notes',
-                                              isLiked);
-                                      // setState(() {});
-                                      return !isLiked;
-                                    }),
+                                            ),
+                                          );
+                                          isBookmarked = !isBookmarked;
+
+                                          return !isLiked;
+                                        }),
+                                  ],
+                                )
                               ],
-                            )
+                            ),
                           ],
                         ),
                       );

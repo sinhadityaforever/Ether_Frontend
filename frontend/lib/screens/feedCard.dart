@@ -126,86 +126,81 @@ class _FeedCardState extends State<FeedCard> {
             ),
           ),
         ),
-        body: Card(
-          elevation: 20,
-          shadowColor: Colors.black,
-          color: Color(0xFF111328),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 10.h,
-              ),
-              Container(
-                child: YoutubePlayerBuilder(
-                  player: YoutubePlayer(
-                    topActions: [
-                      PlaybackSpeedButton(
-                        icon: Icon(Icons.speed),
-                      ),
-                    ],
-                    bottomActions: [
-                      IconButton(
-                        onPressed: () {
-                          Provider.of<Data>(context, listen: false).videoId =
-                              YoutubePlayer.convertUrlToId(args.content)!;
-                          Provider.of<Data>(context, listen: false)
-                                  .videoStartingPoint =
-                              ytController.value.position.inSeconds;
-                          ytController.pause();
-                          Navigator.pushNamed(context, '/fullScreenPlayer');
-                        },
-                        icon: Icon(Icons.fullscreen),
-                      ),
-                      ProgressBar(
-                        isExpanded: true,
-                      ),
-                      CurrentPosition(),
-                      RemainingDuration(),
-                    ],
-                    aspectRatio: 16 / 9,
-                    controller: ytController,
-                    showVideoProgressIndicator: true,
-                    progressIndicatorColor: Color(0xFFEB1555),
-                  ),
-                  builder: (context, player) {
-                    return player;
-                  },
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Container(
+              child: YoutubePlayerBuilder(
+                player: YoutubePlayer(
+                  topActions: [
+                    PlaybackSpeedButton(
+                      icon: Icon(Icons.speed),
+                    ),
+                  ],
+                  bottomActions: [
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<Data>(context, listen: false).videoId =
+                            YoutubePlayer.convertUrlToId(args.content)!;
+                        Provider.of<Data>(context, listen: false)
+                                .videoStartingPoint =
+                            ytController.value.position.inSeconds;
+                        ytController.pause();
+                        Navigator.pushNamed(context, '/fullScreenPlayer');
+                      },
+                      icon: Icon(Icons.fullscreen),
+                    ),
+                    ProgressBar(
+                      isExpanded: true,
+                    ),
+                    CurrentPosition(),
+                    RemainingDuration(),
+                  ],
+                  aspectRatio: 16 / 9,
+                  controller: ytController,
+                  showVideoProgressIndicator: true,
+                  progressIndicatorColor: Color(0xFFEB1555),
                 ),
+                builder: (context, player) {
+                  return player;
+                },
               ),
-              SizedBox(
-                height: 20.h,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(9, 0, 10, 0),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(9, 0, 10, 0),
+                  child: Text(
+                    args.heading,
+                    style: TextStyle(
+                      fontSize: 25.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFEB1555),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(9, 0, 10, 10),
+                  child: SingleChildScrollView(
                     child: Text(
-                      args.heading,
+                      args.desco.replaceAll("20", '\n\n\u2022 '),
                       style: TextStyle(
-                        fontSize: 25.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFEB1555),
+                        fontSize: 17.sp,
+                        color: Colors.white60,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(9, 0, 10, 10),
-                    child: SingleChildScrollView(
-                      child: Text(
-                        args.desco.replaceAll("20", '\n\n\u2022 '),
-                        style: TextStyle(
-                          fontSize: 17.sp,
-                          color: Colors.white60,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
+                ),
+              ],
+            )
+          ],
         ),
       );
     }

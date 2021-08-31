@@ -1314,7 +1314,7 @@ class Data extends ChangeNotifier {
     }
   }
 
-  Future<void> postBookmark(int cardId, String notes, bool isLiked) async {
+  Future<void> postBookmark(int cardId, String notes) async {
     try {
       print('initiated');
       http.Response response = await http.post(

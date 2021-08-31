@@ -49,6 +49,8 @@ dependencies:
   uuid: ^3.0.4
   youtube_player_flutter: ^8.0.0
   like_button: ^2.0.3
+  giffy_dialog: ^1.8.0
+  share_plus: ^2.1.4
 
 dev_dependencies:
   flutter_test:
