@@ -17,7 +17,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
   String uid = '';
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.199';
   late final User googleUser;
   var signupEmail;
   var otp;
@@ -1289,7 +1289,7 @@ class Data extends ChangeNotifier {
   Future<void> getBookMark() async {
     try {
       http.Response response = await http.get(
-        Uri.parse('http://$ip:5000/bookmark/get/$idOfUser'),
+        Uri.parse('https://chat.etherapp.social/bookmark/get/$idOfUser'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -1318,7 +1318,7 @@ class Data extends ChangeNotifier {
     try {
       print('initiated');
       http.Response response = await http.post(
-        Uri.parse('http://$ip:5000/bookmark/post/${cardId}'),
+        Uri.parse('https://chat.etherapp.social/bookmark/post/${cardId}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -1333,6 +1333,58 @@ class Data extends ChangeNotifier {
       await getBookMark();
     } catch (e) {
       print(e);
+    }
+  }
+
+  List<int> likedCardsId = [];
+  Future<void> getLikedCards() async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('https://chat.etherapp.social/likes/get/$idOfUser'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+      );
+      likedCardsId.clear;
+      for (var i = 0; i < jsonDecode(response.body).length; i++) {
+        likedCardsId.add(jsonDecode(response.body)[i]['card_id']);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  bool isLiked(cardId) {
+    return likedCardsId.contains(cardId);
+  }
+
+  Future<void> interactWithLike(cardId) async {
+    print('interact called');
+    if (likedCardsId.contains(cardId)) {
+      await http.delete(
+          Uri.parse('https://chat.etherapp.social/likes/delete/$cardId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${tokenOfUser}',
+          },
+          body: jsonEncode({'user_id': idOfUser}));
+      likedCardsId.remove(cardId);
+    } else {
+      await http.post(
+        Uri.parse('https://chat.etherapp.social/post/${cardId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${tokenOfUser}',
+        },
+        body: jsonEncode({
+          'user_id': idOfUser,
+        }),
+      );
+      likedCardsId.add(cardId);
     }
   }
 }
