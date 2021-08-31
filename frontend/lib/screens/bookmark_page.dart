@@ -103,7 +103,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
         ),
       );
     } else {
-      String notes = "";
+      String notes = "no notes";
       YoutubePlayerController ytController = YoutubePlayerController(
         initialVideoId:
             Provider.of<Data>(context, listen: false).videoId, //Add videoID.
@@ -197,15 +197,22 @@ class _BookmarkPageState extends State<BookmarkPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: TextField(
+                        child: TextFormField(
+                          initialValue:
+                              Provider.of<Data>(context, listen: false)
+                                      .isBookMark(args.cardId)
+                                  ? Provider.of<Data>(context, listen: false)
+                                      .findNote(args.cardId)
+                                  : '',
                           keyboardType: TextInputType.multiline,
                           maxLines: 9,
                           maxLength: 280,
-                          minLines: 6,
+                          minLines: 9,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFF2A2F32),
-                            hintText: 'Type a message',
+                            hintText:
+                                'Human brains just preserves 10% of what they consume. So what are you waiting for? Write your notes here!',
                             hintStyle: TextStyle(
                               color: Color(0xFFA9AAAC),
                             ),
@@ -245,8 +252,12 @@ class _BookmarkPageState extends State<BookmarkPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              entryAnimation: EntryAnimation.TOP,
+                              entryAnimation: EntryAnimation.DEFAULT,
                               onOkButtonPressed: () {},
+                              onCancelButtonPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
                             ),
                           );
                         },

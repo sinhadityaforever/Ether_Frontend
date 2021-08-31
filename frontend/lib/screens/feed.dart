@@ -229,15 +229,37 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: Text(
-                                    "\u2022 Write Your Notes By Bookmarking The idea \n\n\u2022 Show Your Love For The Idea By Liking \n\n\u2022 Deepdive To See Other People's Notes On This Idea",
-                                    maxLines: 8,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 17.sp,
-                                      color: Colors.white60,
-                                    ),
-                                  ),
+                                  child:
+                                      Provider.of<Data>(context, listen: false)
+                                              .isBookMark(Provider.of<Data>(
+                                                      context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .id)
+                                          ? Text(
+                                              Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .findNote(Provider.of<Data>(
+                                                          context,
+                                                          listen: false)
+                                                      .feedCards[index]
+                                                      .id),
+                                              maxLines: 8,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 17.sp,
+                                                color: Colors.white60,
+                                              ),
+                                            )
+                                          : Text(
+                                              "\u2022 Write Your Notes By Bookmarking The idea \n\n\u2022 Show Your Love For The Idea By Liking \n\n\u2022 Deepdive To See Other People's Notes On This Idea",
+                                              maxLines: 8,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 17.sp,
+                                                color: Colors.white60,
+                                              ),
+                                            ),
                                 ),
                                 SizedBox(
                                   height: 20.h,
@@ -293,6 +315,10 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                           context,
                                           '/feedCard',
                                           arguments: FeedCardArguments(
+                                            cardId: Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .id,
                                             content: Provider.of<Data>(context,
                                                     listen: false)
                                                 .feedCards[index]
