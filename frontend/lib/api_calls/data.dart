@@ -1339,10 +1339,11 @@ class Data extends ChangeNotifier {
         }),
       );
       print('finished');
-      await getBookMark();
     } catch (e) {
       print(e);
     }
+    await getBookMark();
+    notifyListeners();
   }
 
   List<int> likedCardsId = [];

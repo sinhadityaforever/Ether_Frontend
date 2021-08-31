@@ -50,7 +50,7 @@ dependencies:
   youtube_player_flutter: ^8.0.0
   like_button: ^2.0.3
   giffy_dialog: ^1.8.0
-  share_plus: ^2.1.4
+  esys_flutter_share: ^1.0.2
 
 dev_dependencies:
   flutter_test:

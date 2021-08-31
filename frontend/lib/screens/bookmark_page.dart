@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -118,6 +118,9 @@ class _HomePageState extends State<HomePage> {
                         if (value == 'Karma levels') {
                           Navigator.pushNamed(context, '/karmalevels');
                         }
+                        if (value == 'B') {
+                          Navigator.pushNamed(context, '/myBookmarks');
+                        }
                         if (value == 'Privacy Policy') {
                           _launchURL();
                         }
@@ -150,6 +153,10 @@ class _HomePageState extends State<HomePage> {
                           PopupMenuItem(
                             child: Text('Profile'),
                             value: "Profile",
+                          ),
+                          PopupMenuItem(
+                            child: Text('My Bookmarks'),
+                            value: "B",
                           ),
                           PopupMenuItem(
                             child: Text('Karma levels'),
