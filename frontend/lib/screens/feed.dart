@@ -35,6 +35,10 @@ class _QuestionFeedState extends State<QuestionFeed> {
                       .isBookMark(Provider.of<Data>(context, listen: false)
                           .feedCards[index]
                           .id);
+                  bool isLoved = Provider.of<Data>(context, listen: false)
+                      .isLiked(Provider.of<Data>(context, listen: false)
+                          .feedCards[index]
+                          .id);
                   if (Provider.of<Data>(context).feedCards[index].isVideo ==
                       false) {
                     return Card(
@@ -235,11 +239,27 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                     ),
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 20.h,
+                                ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    LikeButton(),
+                                    LikeButton(
+                                      isLiked: isLoved,
+                                      onTap: (isLiked) async {
+                                        isLoved = !isLoved;
+                                        Provider.of<Data>(context,
+                                                listen: false)
+                                            .interactWithLike(Provider.of<Data>(
+                                                    context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .id);
+                                        return !isLiked;
+                                      },
+                                    ),
                                     RoundedButton(
                                       colorOfButton: Color(0xFFEB1555),
                                       onPressedRoundButton: () {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 
 class BookmarkArguments {
   bool isVideo;
@@ -228,8 +230,27 @@ class _BookmarkPageState extends State<BookmarkPage> {
                             args.cardId,
                             notes,
                           );
+                          showDialog(
+                            context: context,
+                            builder: (_) => AssetGiffyDialog(
+                              buttonOkText: Text('Share'),
+                              image: Image.asset(
+                                "images/kuch_bhi.gif",
+                              ),
+                              title: Text(
+                                'Idea bookmarked Share it if you like 😄',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              entryAnimation: EntryAnimation.TOP,
+                              onOkButtonPressed: () {},
+                            ),
+                          );
                         },
-                        textOfButton: 'BOOKMARK',
+                        textOfButton: 'Bookmark',
                       ),
                     ],
                   )

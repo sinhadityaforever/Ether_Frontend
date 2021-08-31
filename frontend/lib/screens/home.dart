@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     Provider.of<Data>(context, listen: false).getBookMark();
+    Provider.of<Data>(context, listen: false).getLikedCards();
     for (var i = 0;
         i < Provider.of<Data>(context, listen: false).roomId.length;
         i++) {
