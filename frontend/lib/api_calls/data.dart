@@ -17,7 +17,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
   String uid = '';
-  String ip = '192.168.0.194';
+  String ip = '192.168.0.104';
   late final User googleUser;
   var signupEmail;
   var otp;
@@ -1314,7 +1314,7 @@ class Data extends ChangeNotifier {
     }
   }
 
-  Future<void> postBookmark(int cardId, String notes, bool isLiked) async {
+  Future<void> postBookmark(int cardId, String notes) async {
     try {
       print('initiated');
       http.Response response = await http.post(

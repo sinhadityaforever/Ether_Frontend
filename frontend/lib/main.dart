@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:frontend/screens/bookmark_page.dart';
 import 'package:frontend/screens/chatroompage.dart';
 import 'package:frontend/screens/edit_interest_set/edit_interest.dart';
 import 'package:frontend/screens/edit_interest_set/edit_occupation.dart';
@@ -163,7 +164,8 @@ class _MyAppState extends State<MyApp> {
                   '/roomProfileView': (context) => RoomProfileView(),
                   '/chatRoomChatPage': (context) => ChatRoomPage(),
                   '/fullScreenPlayer': (context) => FullScreenPlayer(),
-                  '/feedCard': (context) => FeedCard()
+                  '/feedCard': (context) => FeedCard(),
+                  '/bookmarkPage': (context) => BookmarkPage(),
                 },
               ),
             );
