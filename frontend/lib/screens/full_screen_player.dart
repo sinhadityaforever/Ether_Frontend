@@ -17,6 +17,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
         autoPlay: true,
         mute: false,
         startAt: Provider.of<Data>(context, listen: false).videoStartingPoint,
+        endAt: Provider.of<Data>(context, listen: false).videoEndingPoint,
       ),
     );
 

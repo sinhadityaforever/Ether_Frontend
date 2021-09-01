@@ -60,6 +60,7 @@ class Data extends ChangeNotifier {
   int onVideoResume = 0;
   String videoId = '';
   int videoStartingPoint = 0;
+  int videoEndingPoint = 3600;
   String avatarUrlOfUser =
       'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
   String question = '';
@@ -1199,6 +1200,9 @@ class Data extends ChangeNotifier {
             imageUrl: jsonDecode(response.body)[i]['image_url'],
             content: jsonDecode(response.body)[i]['content'],
             desco: jsonDecode(response.body)[i]['desco'],
+            occupationId: jsonDecode(response.body)[i]['occupation_id'],
+            startAt: jsonDecode(response.body)[i]['start_at'],
+            endAt: jsonDecode(response.body)[i]['end_at'],
           ),
         );
       }
@@ -1291,7 +1295,7 @@ class Data extends ChangeNotifier {
         .singleWhere((element) => element['card_id'] == cardId, orElse: () {
       return {'notes': 'no notes'};
     });
-
+    print(bookmark['notes'].toString() + 'fgggfgfg');
     return bookmark['notes'];
   }
 
@@ -1319,13 +1323,19 @@ class Data extends ChangeNotifier {
           "start_at": jsonDecode(response.body)[i]['start_at'],
           "end_at": jsonDecode(response.body)[i]['end_at'],
         });
-        bookmarkedFeedCards.add(FeedCard(
+        bookmarkedFeedCards.add(
+          FeedCard(
             id: jsonDecode(response.body)[i]['card_id'],
             heading: jsonDecode(response.body)[i]['heading'],
             isVideo: true,
             imageUrl: 'nopes',
             content: jsonDecode(response.body)[i]['content'],
-            desco: 'No Desc'));
+            desco: 'No Desc',
+            occupationId: jsonDecode(response.body)[i]['occupation_id'],
+            startAt: jsonDecode(response.body)[i]['start_at'],
+            endAt: jsonDecode(response.body)[i]['end_at'],
+          ),
+        );
       }
     } catch (e) {
       print(e);

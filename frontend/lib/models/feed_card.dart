@@ -5,6 +5,9 @@ class FeedCard {
   final String imageUrl;
   final String content;
   final String desco;
+  final int occupationId;
+  final int startAt;
+  final int endAt;
 
   FeedCard({
     required this.id,
@@ -13,5 +16,8 @@ class FeedCard {
     required this.imageUrl,
     required this.content,
     required this.desco,
+    required this.occupationId,
+    required this.startAt,
+    required this.endAt,
   });
 }

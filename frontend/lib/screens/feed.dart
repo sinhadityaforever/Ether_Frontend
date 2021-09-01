@@ -115,6 +115,14 @@ class _QuestionFeedState extends State<QuestionFeed> {
                       ),
                     );
                   } else {
+                    print(
+                      Provider.of<Data>(context, listen: false)
+                          .feedCards[index]
+                          .startAt,
+                    );
+                    print(Provider.of<Data>(context, listen: false)
+                        .feedCards[index]
+                        .endAt);
                     try {
                       String notes = "";
                       YoutubePlayerController ytController =
@@ -126,10 +134,17 @@ class _QuestionFeedState extends State<QuestionFeed> {
                         )!, //Add videoID.
 
                         flags: YoutubePlayerFlags(
+                          disableDragSeek: true,
                           hideControls: false,
                           controlsVisibleAtStart: true,
                           autoPlay: false,
                           mute: false,
+                          startAt: Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .startAt,
+                          endAt: Provider.of<Data>(context, listen: false)
+                              .feedCards[index]
+                              .endAt,
                         ),
                       );
 
@@ -157,6 +172,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                 ),
                                 child: YoutubePlayerBuilder(
                                   player: YoutubePlayer(
+                                    showVideoProgressIndicator: false,
                                     topActions: [
                                       PlaybackSpeedButton(
                                         icon: Icon(Icons.speed),
@@ -178,21 +194,27 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                                   .videoStartingPoint =
                                               ytController
                                                   .value.position.inSeconds;
+                                          Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .videoEndingPoint =
+                                              Provider.of<Data>(context,
+                                                      listen: false)
+                                                  .feedCards[index]
+                                                  .endAt;
                                           ytController.pause();
                                           Navigator.pushNamed(
                                               context, '/fullScreenPlayer');
                                         },
                                         icon: Icon(Icons.fullscreen),
                                       ),
-                                      ProgressBar(
-                                        isExpanded: true,
-                                      ),
-                                      CurrentPosition(),
-                                      RemainingDuration(),
+                                      // ProgressBar(
+                                      //   isExpanded: true,
+                                      // ),
+                                      // CurrentPosition(),
+                                      // RemainingDuration(),
                                     ],
                                     aspectRatio: 16 / 9,
                                     controller: ytController,
-                                    showVideoProgressIndicator: true,
                                     progressIndicatorColor: Color(0xFFEB1555),
                                   ),
                                   builder: (context, player) {
@@ -277,6 +299,13 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                                 .videoStartingPoint =
                                             ytController
                                                 .value.position.inSeconds;
+                                        Provider.of<Data>(context,
+                                                    listen: false)
+                                                .videoEndingPoint =
+                                            Provider.of<Data>(context,
+                                                    listen: false)
+                                                .feedCards[index]
+                                                .endAt;
                                         ytController.pause();
                                         Navigator.pushNamed(
                                           context,

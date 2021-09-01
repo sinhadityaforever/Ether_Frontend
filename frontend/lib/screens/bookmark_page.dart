@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -112,11 +111,13 @@ class _BookmarkPageState extends State<BookmarkPage> {
             Provider.of<Data>(context, listen: false).videoId, //Add videoID.
 
         flags: YoutubePlayerFlags(
+          disableDragSeek: true,
           hideControls: false,
           controlsVisibleAtStart: true,
           autoPlay: true,
           mute: false,
           startAt: Provider.of<Data>(context, listen: false).videoStartingPoint,
+          endAt: Provider.of<Data>(context, listen: false).videoEndingPoint,
         ),
       );
 
@@ -160,11 +161,11 @@ class _BookmarkPageState extends State<BookmarkPage> {
                         },
                         icon: Icon(Icons.fullscreen),
                       ),
-                      ProgressBar(
-                        isExpanded: true,
-                      ),
-                      CurrentPosition(),
-                      RemainingDuration(),
+                      // ProgressBar(
+                      //   isExpanded: true,
+                      // ),
+                      // CurrentPosition(),
+                      // RemainingDuration(),
                     ],
                     aspectRatio: 16 / 9,
                     controller: ytController,

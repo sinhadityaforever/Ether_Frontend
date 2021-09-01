@@ -165,7 +165,7 @@ class _MyAppState extends State<MyApp> {
                   '/roomProfileView': (context) => RoomProfileView(),
                   '/chatRoomChatPage': (context) => ChatRoomPage(),
                   '/fullScreenPlayer': (context) => FullScreenPlayer(),
-                  '/feedCard': (context) => FeedCard(),
+                  // '/feedCard': (context) => FeedCard(),
                   '/bookmarkPage': (context) => BookmarkPage(),
                   '/myBookmarks': (context) => MyBookmarks()
                 },
