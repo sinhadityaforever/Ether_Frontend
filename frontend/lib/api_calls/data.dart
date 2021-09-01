@@ -35,6 +35,7 @@ class Data extends ChangeNotifier {
   List<dynamic> contactInterest = [];
   List<String> contactInterestString = [];
   List<FeedCard> feedCards = [];
+  List<FeedCard> bookmarkedFeedCards = [];
   String contactInterestInterpolated = '';
   List<dynamic> selfInterest = [];
   List<String> selfInterestString = [];
@@ -1306,6 +1307,7 @@ class Data extends ChangeNotifier {
         },
       );
       bookmarks.clear;
+      bookmarkedFeedCards.clear();
       for (var i = 0; i < jsonDecode(response.body).length; i++) {
         bookmarks.add({
           "card_id": jsonDecode(response.body)[i]['card_id'],
@@ -1317,6 +1319,13 @@ class Data extends ChangeNotifier {
           "start_at": jsonDecode(response.body)[i]['start_at'],
           "end_at": jsonDecode(response.body)[i]['end_at'],
         });
+        bookmarkedFeedCards.add(FeedCard(
+            id: jsonDecode(response.body)[i]['card_id'],
+            heading: jsonDecode(response.body)[i]['heading'],
+            isVideo: true,
+            imageUrl: 'nopes',
+            content: jsonDecode(response.body)[i]['content'],
+            desco: 'No Desc'));
       }
     } catch (e) {
       print(e);
