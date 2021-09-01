@@ -231,7 +231,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 0, 10, 10),
                                   child: Text(
-                                    "\u2022 Write Your Notes By Bookmarking The idea \n\n\u2022 Show Your Love For The Idea By Liking \n\n\u2022 Deepdive To See Other People's Notes On This Idea",
+                                    "\u2022 Write Your Notes By Pressing On The 'Take Note' Button \n\n\u2022 Show Your Love For The Idea By Liking \n\n\u2022 Share With Your Friends To Grow Together",
                                     maxLines: 8,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -389,7 +389,7 @@ class _QuestionFeedState extends State<QuestionFeed> {
                                               await rootBundle
                                                   .load('images/share.jpg');
                                           await Share.file(
-                                              'esys image',
+                                              'Share Ether with',
                                               'esys.png',
                                               bytes.buffer.asUint8List(),
                                               'image/png',

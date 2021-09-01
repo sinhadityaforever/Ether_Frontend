@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
@@ -244,7 +248,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                                 "images/kuch_bhi.gif",
                               ),
                               title: Text(
-                                'Idea bookmarked Share it if you like 😄',
+                                'Idea bookmarked. Share it if you like 😄',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 22.0,
@@ -252,7 +256,14 @@ class _BookmarkPageState extends State<BookmarkPage> {
                                 ),
                               ),
                               entryAnimation: EntryAnimation.DEFAULT,
-                              onOkButtonPressed: () {},
+                              onOkButtonPressed: () async {
+                                final ByteData bytes =
+                                    await rootBundle.load('images/share.jpg');
+                                await Share.file('Share Ether with', 'esys.png',
+                                    bytes.buffer.asUint8List(), 'image/png',
+                                    text:
+                                        "Hey let's get Smart together on Ether.\n get Ether: https://play.google.com/store/apps/details?id=com.Wired.frontend");
+                              },
                               onCancelButtonPressed: () {
                                 Navigator.pop(context);
                                 Navigator.pop(context);

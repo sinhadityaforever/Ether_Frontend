@@ -17,6 +17,7 @@ import 'package:frontend/screens/full_screen_player.dart';
 import 'package:frontend/screens/home.dart';
 import 'package:frontend/screens/karma_levels.dart';
 import 'package:frontend/screens/logo.dart';
+import 'package:frontend/screens/my_bookmarks.dart';
 import 'package:frontend/screens/photo.dart';
 import 'package:frontend/screens/profile_view_page.dart';
 import 'package:frontend/screens/room_profile_view.dart';
@@ -166,6 +167,7 @@ class _MyAppState extends State<MyApp> {
                   '/fullScreenPlayer': (context) => FullScreenPlayer(),
                   '/feedCard': (context) => FeedCard(),
                   '/bookmarkPage': (context) => BookmarkPage(),
+                  '/myBookmarks': (context) => MyBookmarks()
                 },
               ),
             );
