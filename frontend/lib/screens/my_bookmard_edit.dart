@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
+// import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/api_calls/data.dart';
@@ -255,12 +255,12 @@ class _MyBookmarkEditState extends State<MyBookmarkEdit> {
                               ),
                               entryAnimation: EntryAnimation.DEFAULT,
                               onOkButtonPressed: () async {
-                                final ByteData bytes =
-                                    await rootBundle.load('images/share.jpg');
-                                await Share.file('Share Ether with', 'esys.png',
-                                    bytes.buffer.asUint8List(), 'image/png',
-                                    text:
-                                        "Hey let's get Smart together on Ether.\n get Ether: https://play.google.com/store/apps/details?id=com.Wired.frontend");
+                                // final ByteData bytes =
+                                //     await rootBundle.load('images/share.jpg');
+                                // await Share.file('Share Ether with', 'esys.png',
+                                //     bytes.buffer.asUint8List(), 'image/png',
+                                //     text:
+                                //         "Hey let's get Smart together on Ether.\n get Ether: https://play.google.com/store/apps/details?id=com.Wired.frontend");
                               },
                               onCancelButtonPressed: () {
                                 Navigator.pop(context);

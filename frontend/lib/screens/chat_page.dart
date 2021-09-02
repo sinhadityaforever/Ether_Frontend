@@ -137,7 +137,7 @@ class _ChatPageState extends State<ChatPage> {
               controller: _controller1,
               itemBuilder: (context, index) {
                 final message = Provider.of<Data>(context).messages[index];
-
+                print(message);
                 if (message['recieverId'] == args.recieverId ||
                     message['senderId'] == args.recieverId) {
                   return GestureDetector(
