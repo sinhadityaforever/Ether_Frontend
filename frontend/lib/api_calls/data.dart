@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/screening.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart' as stream;
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
+  final apiKey = "6vcakyj2smeu";
   String uid = '';
   String ip = '192.168.0.199';
   late final User googleUser;
@@ -64,6 +66,10 @@ class Data extends ChangeNotifier {
   String avatarUrlOfUser =
       'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
   String question = '';
+  final client = stream.StreamChatClient(
+    "6vcakyj2smeu",
+    logLevel: stream.Level.SEVERE,
+  );
 
   // get generateInterestsText => null;
 
@@ -606,6 +612,7 @@ class Data extends ChangeNotifier {
     socket.onConnect((data) {
       print("Connected");
       socket.on("message", (msg) {
+        print(msg.toString() + "fero");
         setMessage(
             msg['reciever_id'],
             msg['message'],
@@ -753,6 +760,8 @@ class Data extends ChangeNotifier {
     await getContacts();
   }
 
+  List<String> channelId = [];
+
   Future<void> getContacts() async {
     contacts.clear();
     http.Response response = await http.get(
@@ -778,9 +787,17 @@ class Data extends ChangeNotifier {
         karmaNumber: insaan[i]['karma'],
         level: levelEmitter(insaan[i]['karma']),
       ));
+      channelId.add(jsonDecode(response.body)['contacts'][i]['channel_id']);
     }
     print(4);
     notifyListeners();
+  }
+
+  void createChannel() {
+    for (var i = 0; i < channelId.length; i++) {
+      final channel = client.channel('messaging', id: channelId[i]);
+      channel.watch();
+    }
   }
 
   List<ContactsModel> profileView = [];
@@ -1441,5 +1458,12 @@ class Data extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> verifyWithStream() async {
+    await client.connectUser(
+      stream.User(id: idOfUser.toString(), extraData: {'name': nameOfUser}),
+      tokenOfUser,
+    );
   }
 }

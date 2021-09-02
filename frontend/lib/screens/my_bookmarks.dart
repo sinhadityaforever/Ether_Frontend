@@ -1,4 +1,4 @@
-import 'package:esys_flutter_share/esys_flutter_share.dart';
+// import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -423,13 +423,13 @@ class _MyBookmarks extends State<MyBookmarks> {
                                                 final ByteData bytes =
                                                     await rootBundle.load(
                                                         'images/share.jpg');
-                                                await Share.file(
-                                                    'Share Ether with',
-                                                    'esys.png',
-                                                    bytes.buffer.asUint8List(),
-                                                    'image/png',
-                                                    text:
-                                                        "Hey let's get Smart together on Ether.\n get Ether: https://play.google.com/store/apps/details?id=com.Wired.frontend");
+                                                // await Share.file(
+                                                //     'Share Ether with',
+                                                //     'esys.png',
+                                                //     bytes.buffer.asUint8List(),
+                                                //     'image/png',
+                                                //     text:
+                                                //         "Hey let's get Smart together on Ether.\n get Ether: https://play.google.com/store/apps/details?id=com.Wired.frontend");
                                                 return !isLiked;
                                               }),
                                         ],
