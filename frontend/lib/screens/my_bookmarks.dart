@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/screens/bookmark_page.dart';
+import 'package:frontend/screens/my_bookmard_edit.dart';
 import 'package:frontend/widgets/rounded_button.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:provider/provider.dart';
@@ -362,8 +363,13 @@ class _MyBookmarks extends State<MyBookmarks> {
                                               ytController.pause();
                                               Navigator.pushNamed(
                                                 context,
-                                                '/bookmarkPage',
-                                                arguments: BookmarkArguments(
+                                                '/myBookmarksEdit',
+                                                arguments: MyBookmarkEditArgs(
+                                                  notes: Provider.of<Data>(
+                                                              context,
+                                                              listen: false)
+                                                          .bookmarks[index]
+                                                      ['notes'],
                                                   content: Provider.of<Data>(
                                                           context,
                                                           listen: false)
