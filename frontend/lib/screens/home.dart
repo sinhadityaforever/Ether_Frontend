@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
     Provider.of<Data>(context, listen: false).getLikedCards();
     Provider.of<Data>(context, listen: false).getBookMark();
     Provider.of<Data>(context, listen: false).getLikedCards();
