@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:frontend/api_calls/data.dart';
 import 'package:frontend/models/search_model.dart';
-import 'package:frontend/screens/chat_Set/contact_stream.dart';
 import 'package:frontend/widgets/negative_popup.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,8 +29,7 @@ class _HomePageState extends State<HomePage> {
     Provider.of<Data>(context, listen: false).getLikedCards();
     Provider.of<Data>(context, listen: false).getBookMark();
     Provider.of<Data>(context, listen: false).getLikedCards();
-    Provider.of<Data>(context, listen: false).verifyWithStream();
-    Provider.of<Data>(context, listen: false).createChannel();
+
     for (var i = 0;
         i < Provider.of<Data>(context, listen: false).roomId.length;
         i++) {
@@ -205,7 +203,7 @@ class _HomePageState extends State<HomePage> {
           body: TabBarView(
             children: [
               QuestionFeed(),
-              ChannelListPage(),
+              ContactPage(),
               ChatRoomContactPage(),
             ],
           ),

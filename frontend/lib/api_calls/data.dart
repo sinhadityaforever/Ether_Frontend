@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/screening.dart';
-import 'package:stream_chat_flutter/stream_chat_flutter.dart' as stream;
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
 import 'package:http/http.dart' as http;
@@ -66,10 +65,6 @@ class Data extends ChangeNotifier {
   String avatarUrlOfUser =
       'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png';
   String question = '';
-  final client = stream.StreamChatClient(
-    "6vcakyj2smeu",
-    logLevel: stream.Level.SEVERE,
-  );
 
   // get generateInterestsText => null;
 
@@ -793,13 +788,6 @@ class Data extends ChangeNotifier {
     notifyListeners();
   }
 
-  void createChannel() {
-    for (var i = 0; i < channelId.length; i++) {
-      final channel = client.channel('messaging', id: channelId[i]);
-      channel.watch();
-    }
-  }
-
   List<ContactsModel> profileView = [];
 
   Future<void> getProfiles(int id) async {
@@ -1460,10 +1448,10 @@ class Data extends ChangeNotifier {
     }
   }
 
-  Future<void> verifyWithStream() async {
-    await client.connectUser(
-      stream.User(id: idOfUser.toString(), extraData: {'name': nameOfUser}),
-      tokenOfUser,
-    );
-  }
+  // Future<void> verifyWithStream() async {
+  //   await client.connectUser(
+  //     stream.User(id: idOfUser.toString(), extraData: {'name': nameOfUser}),
+  //     tokenOfUser,
+  //   );
+  // }
 }
