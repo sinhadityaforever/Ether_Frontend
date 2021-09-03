@@ -13,6 +13,7 @@ class _LogoScreenState extends State<LogoScreen> {
   @override
   void initState() {
     super.initState();
+
     Provider.of<Data>(context, listen: false).verification(context);
   }
 

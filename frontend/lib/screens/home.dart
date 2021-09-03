@@ -40,24 +40,33 @@ class _HomePageState extends State<HomePage> {
     var initializationSettings =
         InitializationSettings(android: initialzationSettingsAndroid);
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    Future<dynamic> onSelectNotification(payload) async {
+      if (payload == 'Try') {
+        print('Success');
+      }
+    }
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      String action = message.data['action'];
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channel.description,
-              icon: android.smallIcon,
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                icon: android.smallIcon,
+              ),
             ),
-          ),
-        );
+            payload: action);
         if (notification.title == 'New Connection') {
           Provider.of<Data>(context, listen: false).getContacts();
         }
