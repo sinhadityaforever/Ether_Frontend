@@ -10,6 +10,7 @@ class LogoScreen extends StatefulWidget {
 }
 
 class _LogoScreenState extends State<LogoScreen> {
+  bool isNotifornot = false;
   @override
   void initState() {
     super.initState();
