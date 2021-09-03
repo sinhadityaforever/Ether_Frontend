@@ -51,10 +51,7 @@ dependencies:
   like_button: ^2.0.3
   giffy_dialog: ^1.8.0
   esys_flutter_share: ^1.0.2
- 
- 
-
-
+  animations: ^2.0.1
 
 dev_dependencies:
   flutter_test:

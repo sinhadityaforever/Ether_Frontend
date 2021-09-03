@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/api_calls/data.dart';
+import 'package:frontend/screens/community_profile.dart';
 import 'package:frontend/widgets/chatroombubble.dart';
 import 'package:frontend/widgets/negative_popup.dart';
 import 'package:frontend/widgets/popup_screen.dart';
@@ -19,11 +20,13 @@ class ChatRoomPageArguments {
   final String roomAvatarUrl;
   final String chatRoomName;
   final int roomId;
+  final String aboutRoom;
 
   ChatRoomPageArguments({
     required this.roomAvatarUrl,
     required this.chatRoomName,
     required this.roomId,
+    required this.aboutRoom,
   });
 }
 
@@ -89,29 +92,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 // ignore: deprecated_member_use
                 FlatButton(
                   onPressed: () {
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   '/profileView',
-                    //   arguments: ProfileViewArgs(
-                    //     name: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .name,
-                    //     imageUrl: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .imageUrl,
-                    //     aboutValue: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .aboutValue,
-                    //     interestValue: Provider.of<Data>(context, listen: false)
-                    //         .contactInterestInterpolated,
-                    //     level: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .level,
-                    //     karmaNumber: Provider.of<Data>(context, listen: false)
-                    //         .selectedContact
-                    //         .karmaNumber,
-                    //   ),
-                    // );
+                    Navigator.pushNamed(
+                      context,
+                      '/roomProfileView',
+                      arguments: RoomViewArgs(
+                        aboutRoom: args.aboutRoom,
+                        index: args.roomId - 1,
+                      ),
+                    );
                   },
                   child: Row(
                     children: [

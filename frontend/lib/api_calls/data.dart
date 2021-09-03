@@ -6,7 +6,6 @@ import 'package:frontend/main.dart';
 import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/screening.dart';
-
 import '../models/interestModel.dart';
 import 'package:frontend/models/contacts_model.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +17,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Data extends ChangeNotifier {
+  final apiKey = "6vcakyj2smeu";
   String uid = '';
   String ip = '192.168.0.199';
   late final User googleUser;
@@ -608,6 +608,7 @@ class Data extends ChangeNotifier {
     socket.onConnect((data) {
       print("Connected");
       socket.on("message", (msg) {
+        print(msg.toString() + "fero");
         setMessage(
             msg['reciever_id'],
             msg['message'],
@@ -1446,4 +1447,11 @@ class Data extends ChangeNotifier {
       print(e);
     }
   }
+
+  // Future<void> verifyWithStream() async {
+  //   await client.connectUser(
+  //     stream.User(id: idOfUser.toString(), extraData: {'name': nameOfUser}),
+  //     tokenOfUser,
+  //   );
+  // }
 }

@@ -9,7 +9,6 @@ import 'package:frontend/screens/chatroompage.dart';
 import 'package:frontend/screens/edit_interest_set/edit_interest.dart';
 import 'package:frontend/screens/edit_interest_set/edit_occupation.dart';
 import 'package:frontend/screens/entry_screen.dart';
-import 'package:frontend/screens/feedCard.dart';
 import 'package:frontend/screens/forgot_password_set/change_password.dart';
 import 'package:frontend/screens/forgot_password_set/email_confirm.dart';
 import 'package:frontend/screens/forgot_password_set/otp_password.dart';
@@ -21,7 +20,6 @@ import 'package:frontend/screens/my_bookmard_edit.dart';
 import 'package:frontend/screens/my_bookmarks.dart';
 import 'package:frontend/screens/photo.dart';
 import 'package:frontend/screens/profile_view_page.dart';
-import 'package:frontend/screens/room_profile_view.dart';
 import 'package:frontend/screens/self_profile_view.dart';
 import 'package:frontend/screens/welcome.dart';
 import 'api_calls/data.dart';
@@ -35,6 +33,7 @@ import 'screens/signup_set/otpverify.dart';
 import 'screens/signup_set/confirm_account.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'screens/community_profile.dart' as r;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -133,6 +132,11 @@ class _MyAppState extends State<MyApp> {
               value: Data(),
               child: MaterialApp(
                 theme: ThemeData.dark().copyWith(
+                  pageTransitionsTheme: const PageTransitionsTheme(
+                    builders: <TargetPlatform, PageTransitionsBuilder>{
+                      TargetPlatform.android: ZoomPageTransitionsBuilder(),
+                    },
+                  ),
                   accentColor: Color(0xFFEB1555),
                   scaffoldBackgroundColor: Color(0xFF0A0E21),
                   primaryColor: Color(0xFF0A0E21),
@@ -163,13 +167,13 @@ class _MyAppState extends State<MyApp> {
                   '/editOccupation': (context) => OccupationEdit(),
                   '/editInterest': (context) => EditInterestAfterOccupation(),
                   '/selfProfileView': (context) => SelfProfileView(),
-                  '/roomProfileView': (context) => RoomProfileView(),
+                  '/roomProfileView': (context) => r.RoomProfileView(),
                   '/chatRoomChatPage': (context) => ChatRoomPage(),
                   '/fullScreenPlayer': (context) => FullScreenPlayer(),
                   // '/feedCard': (context) => FeedCard(),
                   '/bookmarkPage': (context) => BookmarkPage(),
                   '/myBookmarks': (context) => MyBookmarks(),
-                  '/myBookmarksEdit': (context) => MyBookmarkEdit()
+                  '/myBookmarksEdit': (context) => MyBookmarkEdit(),
                 },
               ),
             );
