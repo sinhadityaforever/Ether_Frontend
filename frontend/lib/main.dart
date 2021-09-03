@@ -24,6 +24,7 @@ import 'package:frontend/screens/self_profile_view.dart';
 import 'package:frontend/screens/welcome.dart';
 import 'package:googleapis/serviceconsumermanagement/v1.dart';
 import 'api_calls/data.dart';
+import 'local_notification_service.dart';
 import 'screens/edit_profile_page.dart';
 import 'package:provider/provider.dart';
 import 'screens/login.dart';
@@ -37,26 +38,30 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'screens/community_profile.dart' as r;
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
-Future<void> _firebaseMessagingBackgroundHandler(
-  RemoteMessage message,
-) async {
-  await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
-  print(message.data);
-  String action = message.data['action'];
-  flutterLocalNotificationsPlugin.show(
-      message.data.hashCode,
-      message.data['title'],
-      message.data['body'],
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-        ),
-      ),
-      payload: action);
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message.data.toString());
+  print(message.notification!.title);
 }
+// Future<void> _firebaseMessagingBackgroundHandler(
+//   RemoteMessage message,
+// ) async {
+//   await Firebase.initializeApp();
+//   print('Handling a background message ${message.messageId}');
+//   print(message.data);
+//   String action = message.data['action'];
+//   flutterLocalNotificationsPlugin.show(
+//       message.data.hashCode,
+//       message.data['title'],
+//       message.data['body'],
+//       NotificationDetails(
+//         android: AndroidNotificationDetails(
+//           channel.id,
+//           channel.name,
+//           channel.description,
+//         ),
+//       ),
+//       payload: action);
+// }
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -71,8 +76,8 @@ void getToken() async {
   print(token);
 }
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -80,24 +85,25 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+//   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+//   await flutterLocalNotificationsPlugin
+//       .resolvePlatformSpecificImplementation<
+//           AndroidFlutterLocalNotificationsPlugin>()
+//       ?.createNotificationChannel(channel);
 
-//danger
-  var initialzationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-  var initializationSettings =
-      InitializationSettings(android: initialzationSettingsAndroid);
-  Future<dynamic> onSelectNotification(payload) async {
-    print(payload);
-    if (payload == 'Try') {}
-  }
+// //danger
+//   var initialzationSettingsAndroid =
+//       AndroidInitializationSettings('@mipmap/ic_launcher');
+//   var initializationSettings =
+//       InitializationSettings(android: initialzationSettingsAndroid);
+//   Future<dynamic> onSelectNotification(payload) async {
+//     print(payload);
+//     if (payload == 'Try') {}
+//   }
 
-  flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: onSelectNotification);
+//   flutterLocalNotificationsPlugin.initialize(initializationSettings,
+//       onSelectNotification: onSelectNotification);
 
   runApp(MyApp());
 }
@@ -113,38 +119,72 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.instance.getInitialMessage().then((message) => {
-          if (message!.data['action'] == 'Try')
-            {Navigator.pushNamed(context, '/karmalevels')}
-        });
+    LocalNotificationService.initialize(context);
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    ///gives you the message on which user taps
+    ///and it opened the app from terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        if (message.data['action'] == 'Try') {
+          navigatorKey.currentState!.pushNamed('/karmalevels');
+        }
+      }
+    });
+
+    ///forground work
+    FirebaseMessaging.onMessage.listen((message) {
+      if (message.notification != null) {
+        if (message.data['action'] == 'Try') {
+          navigatorKey.currentState!.pushNamed('/karmalevels');
+        }
+      }
+
+      LocalNotificationService.display(message);
+    });
+
+    ///When the app is in background but opened and user taps
+    ///on the notification
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
       if (message.data['action'] == 'Try') {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => KarmaView()));
+        navigatorKey.currentState!.pushNamed('/karmalevels');
       }
     });
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      String action = message.data['action'];
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channel.description,
-                icon: android.smallIcon,
-              ),
-            ),
-            payload: action);
-      }
-    });
+    // FirebaseMessaging.instance.getInitialMessage().then((message) {
+    //   if (message!.data['action'] == 'Try') {
+    //     print(message.data['action']);
+    //     Navigator.push(
+    //         context, MaterialPageRoute(builder: (context) => KarmaView()));
+    //   }
+    // });
+
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   if (message.data['action'] == 'Try') {
+    //     Navigator.push(
+    //         context, MaterialPageRoute(builder: (context) => KarmaView()));
+    //   }
+    // });
+
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   RemoteNotification? notification = message.notification;
+    //   AndroidNotification? android = message.notification?.android;
+    //   String action = message.data['action'];
+    //   if (notification != null && android != null) {
+    //     flutterLocalNotificationsPlugin.show(
+    //         notification.hashCode,
+    //         notification.title,
+    //         notification.body,
+    //         NotificationDetails(
+    //           android: AndroidNotificationDetails(
+    //             channel.id,
+    //             channel.name,
+    //             channel.description,
+    //             icon: android.smallIcon,
+    //           ),
+    //         ),
+    //         payload: action);
+    //   }
+    // });
 
     getToken();
   }
@@ -171,7 +211,7 @@ class _MyAppState extends State<MyApp> {
                   scaffoldBackgroundColor: Color(0xFF0A0E21),
                   primaryColor: Color(0xFF0A0E21),
                 ),
-                initialRoute: '/logo',
+                home: LogoScreen(),
                 navigatorObservers: [
                   FirebaseAnalyticsObserver(analytics: analytics),
                 ],
