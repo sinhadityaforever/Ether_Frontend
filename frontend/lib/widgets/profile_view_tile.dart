@@ -28,7 +28,6 @@ class profileViewTile extends StatelessWidget {
                 ),
                 Text(
                   value,
-                  maxLines: 10,
                   style: TextStyle(
                     fontSize: 18.sp,
                     color: Colors.white60,

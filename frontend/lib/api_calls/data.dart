@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/main.dart';
 import 'package:frontend/models/feed_card.dart';
 import 'package:frontend/models/group_chat.dart';
 import 'package:frontend/models/screening.dart';
@@ -755,8 +756,7 @@ class Data extends ChangeNotifier {
     await getContacts();
   }
 
-  List<String> channelId = [];
-
+  List channelIds = [];
   Future<void> getContacts() async {
     contacts.clear();
     http.Response response = await http.get(
@@ -782,7 +782,7 @@ class Data extends ChangeNotifier {
         karmaNumber: insaan[i]['karma'],
         level: levelEmitter(insaan[i]['karma']),
       ));
-      channelId.add(jsonDecode(response.body)['contacts'][i]['channel_id']);
+      channelIds.add(jsonDecode(response.body)['contacts'][i]['channel_id']);
     }
     print(4);
     notifyListeners();
