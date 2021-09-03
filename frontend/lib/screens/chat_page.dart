@@ -190,7 +190,7 @@ class _ChatPageState extends State<ChatPage> {
                     child: ChatBubble(
                       texto: message['message'],
                       isMe: message['senderId'] ==
-                              Provider.of<Data>(context).idOfUser
+                              Provider.of<Data>(context, listen: false).idOfUser
                           ? true
                           : false,
                       isAdmin: message['isAdmin'],

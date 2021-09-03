@@ -22,6 +22,7 @@ import 'package:frontend/screens/photo.dart';
 import 'package:frontend/screens/profile_view_page.dart';
 import 'package:frontend/screens/self_profile_view.dart';
 import 'package:frontend/screens/welcome.dart';
+import 'package:googleapis/serviceconsumermanagement/v1.dart';
 import 'api_calls/data.dart';
 import 'screens/edit_profile_page.dart';
 import 'package:provider/provider.dart';
@@ -35,22 +36,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'screens/community_profile.dart' as r;
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+Future<void> _firebaseMessagingBackgroundHandler(
+  RemoteMessage message,
+) async {
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
   print(message.data);
+  String action = message.data['action'];
   flutterLocalNotificationsPlugin.show(
-    message.data.hashCode,
-    message.data['title'],
-    message.data['body'],
-    NotificationDetails(
-      android: AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-        channel.description,
+      message.data.hashCode,
+      message.data['title'],
+      message.data['body'],
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channel.description,
+        ),
       ),
-    ),
-  );
+      payload: action);
 }
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
@@ -58,7 +63,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', // id
   'High Importance Notifications', // title
   'This channel is used for important notifications.', // description
-  importance: Importance.high,
+  importance: Importance.max,
 );
 
 void getToken() async {
@@ -80,6 +85,20 @@ void main() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
+
+//danger
+  var initialzationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettings =
+      InitializationSettings(android: initialzationSettingsAndroid);
+  Future<dynamic> onSelectNotification(payload) async {
+    print(payload);
+    if (payload == 'Try') {}
+  }
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: onSelectNotification);
+
   runApp(MyApp());
 }
 
@@ -89,34 +108,44 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey(debugLabel: "Main Navigator");
   @override
   void initState() {
     super.initState();
-    var initialzationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettings =
-        InitializationSettings(android: initialzationSettingsAndroid);
+    FirebaseMessaging.instance.getInitialMessage().then((message) => {
+          if (message!.data['action'] == 'Try')
+            {Navigator.pushNamed(context, '/karmalevels')}
+        });
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.data['action'] == 'Try') {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => KarmaView()));
+      }
+    });
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
+      String action = message.data['action'];
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channel.description,
-              icon: android.smallIcon,
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                icon: android.smallIcon,
+              ),
             ),
-          ),
-        );
+            payload: action);
       }
     });
+
     getToken();
   }
 
@@ -131,6 +160,7 @@ class _MyAppState extends State<MyApp> {
             return ChangeNotifierProvider<Data>.value(
               value: Data(),
               child: MaterialApp(
+                navigatorKey: navigatorKey,
                 theme: ThemeData.dark().copyWith(
                   pageTransitionsTheme: const PageTransitionsTheme(
                     builders: <TargetPlatform, PageTransitionsBuilder>{
@@ -156,10 +186,10 @@ class _MyAppState extends State<MyApp> {
                   '/interests': (context) => InterestsPage(),
                   '/contactsPage': (context) => HomePage(),
                   '/chatPage': (context) => ChatPage(),
-                  '/logo': (context) => LogoScreen(),
+                  '/logo': (_) => LogoScreen(),
                   '/welcome': (context) => Welcome(),
                   '/photo': (context) => Photo(),
-                  '/karmalevels': (context) => KarmaView(),
+                  '/karmalevels': (_) => KarmaView(),
                   '/forgotPassword': (context) => EmailConfirm(),
                   '/otpPassword': (context) => OTPPassword(),
                   '/changePassword': (context) => ChangePassword(),
