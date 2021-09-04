@@ -22,7 +22,7 @@ import 'package:frontend/screens/photo.dart';
 import 'package:frontend/screens/profile_view_page.dart';
 import 'package:frontend/screens/self_profile_view.dart';
 import 'package:frontend/screens/welcome.dart';
-import 'package:googleapis/serviceconsumermanagement/v1.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'api_calls/data.dart';
 import 'local_notification_service.dart';
 import 'screens/edit_profile_page.dart';
@@ -36,6 +36,11 @@ import 'screens/signup_set/confirm_account.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'screens/community_profile.dart' as r;
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
+
+const _url = 'https://www.etherapp.org/post/privacy-policy';
+void _launchURL() async =>
+    await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 Future<void> backgroundHandler(RemoteMessage message) async {
@@ -123,32 +128,16 @@ class _MyAppState extends State<MyApp> {
 
     ///gives you the message on which user taps
     ///and it opened the app from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        if (message.data['action'] == 'Try') {
-          navigatorKey.currentState!.pushNamed('/karmalevels');
-        }
-      }
-    });
+    FirebaseMessaging.instance.getInitialMessage().then((message) {});
 
     ///forground work
     FirebaseMessaging.onMessage.listen((message) {
-      if (message.notification != null) {
-        if (message.data['action'] == 'Try') {
-          navigatorKey.currentState!.pushNamed('/karmalevels');
-        }
-      }
-
       LocalNotificationService.display(message);
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      if (message.data['action'] == 'Try') {
-        navigatorKey.currentState!.pushNamed('/karmalevels');
-      }
-    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {});
 
     // FirebaseMessaging.instance.getInitialMessage().then((message) {
     //   if (message!.data['action'] == 'Try') {
